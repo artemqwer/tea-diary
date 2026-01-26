@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  // Vercel автоматично надає ці змінні, коли ти підключаєш базу
+  url       = env("POSTGRES_PRISMA_URL") 
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model User {
+  id       String    @id @default(cuid())
+  email    String    @unique
+  password String
+  image    String?
+  name     String?
+  teas     Tea[]
+  sessions Session[]
+}
+
+model Tea {
+  id        String   @id @default(cuid())
+  name      String
+  type      String
+  year      Int
+  origin    String
+  total     Int
+  remaining Int
+  createdAt DateTime @default(now())
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions  Session[]
+}
+
+model Session {
+  id       String   @id @default(cuid())
+  date     DateTime @default(now())
+  duration Int
+  steeps   Int
+  rating   Int      @default(0)
+  
+  volume   Int
+  grams    Float
+  
+  teaId    String
+  tea      Tea      @relation(fields: [teaId], references: [id], onDelete: Cascade)
+  
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
