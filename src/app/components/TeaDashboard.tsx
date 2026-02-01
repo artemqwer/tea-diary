@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Play, Pause, RotateCcw, Plus, Home, History, 
   Droplets, Clock, Leaf, ChevronRight, Search, 
-  X, Pencil, Save, Trash2, AlertTriangle, Star 
+  X, Pencil, Save, Trash2, AlertTriangle, Star,
+  User, LogOut, Settings
 } from 'lucide-react';
 import { addTeaAction, deleteTeaAction, addSessionAction } from './../actions';
+import { signOut } from 'next-auth/react';
 
 // --- ТИПИ ---
 type Tea = {
@@ -42,11 +44,93 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }: any) 
         </div>
         <p className="text-stone-400 text-sm mb-6 leading-relaxed">{message}</p>
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 py-3 rounded-xl bg-stone-800 text-stone-300 font-medium transition-colors">Скасувати</button>
-          <button onClick={onConfirm} className="flex-1 py-3 rounded-xl bg-red-900/30 text-red-400 border border-red-900/50 font-medium transition-colors">Видалити</button>
+          <button onClick={onClose} className="flex-1 py-3 rounded-xl bg-stone-800 text-stone-300 font-medium transition-colors hover:bg-stone-700">Скасувати</button>
+          <button onClick={onConfirm} className="flex-1 py-3 rounded-xl bg-red-900/30 text-red-400 border border-red-900/50 font-medium transition-colors hover:bg-red-900/40">Підтвердити</button>
         </div>
       </div>
     </div>
+  );
+};
+
+// --- ПРОФІЛЬНЕ МЕНЮ ---
+const UserProfileMenu = ({ user }: { user: any }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Закриття меню при кліку поза ним
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
+
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/login' });
+  };
+
+  const getInitials = (name?: string) => {
+    if (!name) return 'U';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
+  return (
+    <>
+      <div ref={menuRef} className="relative">
+        <button 
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-600 to-amber-700 border-2 border-stone-700 flex items-center justify-center text-xs font-bold text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all active:scale-95"
+        >
+          {getInitials(user?.name)}
+        </button>
+
+        {isOpen && (
+          <div className="absolute right-0 top-12 w-64 bg-stone-900 border border-stone-800 rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-top-2 duration-200 z-50">
+            {/* Інфо про користувача */}
+            <div className="p-4 border-b border-stone-800 bg-stone-900/50">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-600 to-amber-700 flex items-center justify-center text-lg font-bold text-white">
+                  {getInitials(user?.name)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-medium text-stone-100 truncate">{user?.name || 'Користувач'}</h4>
+                  <p className="text-xs text-stone-500 truncate">{user?.email || 'email@example.com'}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Меню опцій */}
+            <div className="p-2">
+              <button 
+                onClick={() => {
+                  setIsOpen(false);
+                  setShowLogoutModal(true);
+                }}
+                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-red-400 hover:bg-red-900/10 transition-colors group"
+              >
+                <LogOut size={18} className="group-hover:translate-x-0.5 transition-transform" />
+                <span className="font-medium">Вийти з акаунту</span>
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Модалка підтвердження виходу */}
+      <ConfirmationModal 
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+        title="Вийти з акаунту?"
+        message="Ви впевнені, що хочете вийти? Ваші дані будуть збережені."
+      />
+    </>
   );
 };
 
@@ -264,7 +348,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
 };
 
 // --- ГОЛОВНИЙ ДАШБОРД ---
-export default function TeaDashboard({ initialTeas, initialSessions, stats }: { initialTeas: Tea[], initialSessions: any[], stats: any }) {
+export default function TeaDashboard({ initialTeas, initialSessions, stats, user }: { initialTeas: Tea[], initialSessions: any[], stats: any, user?: any }) {
   const [activeTab, setActiveTab] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTea, setActiveTea] = useState<Tea | null>(null);
@@ -309,7 +393,7 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats }: { 
             <p className="text-stone-500 text-sm mb-1">Сьогодні {new Date().toLocaleDateString('uk-UA', { weekday: 'long' })}</p>
             <h1 className="text-2xl font-serif text-stone-100">Час Чаю</h1>
           </div>
-          <div className="w-10 h-10 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-bold text-stone-400">TEA</div>
+          <UserProfileMenu user={user} />
         </header>
 
         <main className="px-6">

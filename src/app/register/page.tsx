@@ -1,18 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Leaf, Lock, Mail, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
+import { Leaf, Lock, Mail, ArrowRight, AlertCircle, User } from 'lucide-react';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const registered = searchParams.get('registered');
-  
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -21,20 +19,36 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
 
+    // Валідація
+    if (password !== confirmPassword) {
+      setError('Паролі не співпадають');
+      setLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Пароль має бути не менше 6 символів');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
       });
 
-      if (result?.error) {
-        setError('Невірний email або пароль');
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Помилка реєстрації');
         setLoading(false);
-      } else {
-        router.push('/');
-        router.refresh();
+        return;
       }
+
+      // Успіх! Перенаправляємо на логін
+      router.push('/login?registered=true');
     } catch (err) {
       setError('Щось пішло не так');
       setLoading(false);
@@ -50,27 +64,35 @@ export default function LoginPage() {
            <Leaf size={32} className="text-white" />
         </div>
         <h1 className="text-3xl font-serif text-stone-100">Чайний Щоденник</h1>
-        <p className="text-stone-500 text-sm mt-2">Вхід до особистої колекції</p>
+        <p className="text-stone-500 text-sm mt-2">Створення нового акаунту</p>
       </div>
 
-      {/* Картка входу */}
+      {/* Картка реєстрації */}
       <div className="w-full max-w-sm bg-stone-900 border border-stone-800 rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in duration-500">
         
         <form onSubmit={handleSubmit} className="space-y-5">
           
-          {/* Успішна реєстрація */}
-          {registered && (
-            <div className="bg-green-900/20 border border-green-900/50 text-green-400 text-sm p-3 rounded-xl flex items-center gap-2">
-              <CheckCircle size={16} /> Реєстрацію завершено! Тепер увійдіть
-            </div>
-          )}
-
           {/* Помилка */}
           {error && (
             <div className="bg-red-900/20 border border-red-900/50 text-red-400 text-sm p-3 rounded-xl flex items-center gap-2">
               <AlertCircle size={16} /> {error}
             </div>
           )}
+
+          <div>
+            <label className="text-xs text-stone-500 uppercase tracking-widest block mb-1.5 ml-1">Ім'я</label>
+            <div className="relative">
+              <User className="absolute left-3.5 top-3.5 text-stone-600" size={18} />
+              <input 
+                type="text" 
+                required
+                className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 pl-10 pr-4 text-stone-200 focus:border-amber-600/50 focus:outline-none transition-colors"
+                placeholder="Ваше ім'я"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+          </div>
 
           <div>
             <label className="text-xs text-stone-500 uppercase tracking-widest block mb-1.5 ml-1">Email</label>
@@ -80,7 +102,7 @@ export default function LoginPage() {
                 type="email" 
                 required
                 className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 pl-10 pr-4 text-stone-200 focus:border-amber-600/50 focus:outline-none transition-colors"
-                placeholder="admin@tea.com"
+                placeholder="tea@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -95,9 +117,24 @@ export default function LoginPage() {
                 type="password" 
                 required
                 className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 pl-10 pr-4 text-stone-200 focus:border-amber-600/50 focus:outline-none transition-colors"
-                placeholder="••••••••"
+                placeholder="Мінімум 6 символів"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs text-stone-500 uppercase tracking-widest block mb-1.5 ml-1">Підтвердіть пароль</label>
+            <div className="relative">
+              <Lock className="absolute left-3.5 top-3.5 text-stone-600" size={18} />
+              <input 
+                type="password" 
+                required
+                className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 pl-10 pr-4 text-stone-200 focus:border-amber-600/50 focus:outline-none transition-colors"
+                placeholder="Повторіть пароль"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
           </div>
@@ -107,17 +144,17 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full bg-amber-600 hover:bg-amber-500 text-white font-medium py-3.5 rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Входимо...' : 'Увійти'}
+            {loading ? 'Реєструємо...' : 'Зареєструватись'}
             {!loading && <ArrowRight size={18} />}
           </button>
         </form>
 
-        {/* Посилання на реєстрацію */}
+        {/* Посилання на логін */}
         <div className="mt-6 text-center">
           <p className="text-stone-500 text-sm">
-            Немає акаунту?{' '}
-            <Link href="/register" className="text-amber-500 hover:text-amber-400 font-medium transition-colors">
-              Зареєструватись
+            Вже є акаунт?{' '}
+            <Link href="/login" className="text-amber-500 hover:text-amber-400 font-medium transition-colors">
+              Увійти
             </Link>
           </p>
         </div>
