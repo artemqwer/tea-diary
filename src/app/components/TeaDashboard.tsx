@@ -401,6 +401,12 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
     onClose();
   };
 
+  const vibrate = () => {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(10);
+    }
+  };
+
   const formatTime = (totalSeconds: number) => {
     const mins = Math.floor(totalSeconds / 60);
     const secs = totalSeconds % 60;
@@ -416,13 +422,13 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
 
         <div className="flex gap-2 mb-12">
           {[1, 2, 3, 4, 5].map((star) => (
-            <button key={star} onClick={() => setRating(star)} className="p-1">
+            <button key={star} onClick={() => { setRating(star); vibrate(); }} className="p-1">
               <Star size={36} fill={star <= rating ? "#d97706" : "none"} className={star <= rating ? "text-amber-600" : "text-stone-700"} />
             </button>
           ))}
         </div>
 
-        <button onClick={handleFinish} className="w-full max-w-xs bg-amber-600 py-4 rounded-xl font-bold shadow-lg shadow-amber-900/20 active:scale-95 transition-transform">
+        <button onClick={() => { vibrate(); handleFinish(); }} className="w-full max-w-xs bg-amber-600 py-4 rounded-xl font-bold shadow-lg shadow-amber-900/20 active:scale-95 transition-transform">
           Зберегти в історію
         </button>
       </div>
@@ -432,12 +438,12 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
   return (
     <div className="fixed inset-0 bg-stone-950 z-[70] flex flex-col h-dvh overflow-hidden">
       <div className="flex justify-between items-center p-6 pt-12">
-        <button onClick={onClose} className="text-stone-400 flex items-center gap-1"><ChevronRight className="rotate-180" size={20} /> Назад</button>
+        <button onClick={() => { vibrate(); onClose(); }} className="text-stone-400 flex items-center gap-1"><ChevronRight className="rotate-180" size={20} /> Назад</button>
         <div className="flex flex-col items-center">
           <span className="text-stone-500 text-xs tracking-widest uppercase">Gongfu Session</span>
           <span className="text-amber-600/50 font-mono text-xs mt-0.5">{formatTime(sessionDuration)}</span>
         </div>
-        <button onClick={() => setShowSummary(true)} className="text-amber-500 font-bold">Фініш</button>
+        <button onClick={() => { vibrate(); setShowSummary(true); }} className="text-amber-500 font-bold">Фініш</button>
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center px-6">
@@ -477,11 +483,11 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
         </div>
 
         <div className="flex items-center gap-8 mb-8">
-          <button onClick={() => { setIsActive(false); setSeconds(0); }} className="w-14 h-14 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-400 active:scale-90 transition-transform"><RotateCcw size={20} /></button>
-          <button onClick={() => setIsActive(!isActive)} className={`w-24 h-24 rounded-full flex items-center justify-center shadow-2xl transition-all active:scale-95 ${isActive ? 'bg-stone-800 text-amber-500 border border-amber-500/20' : 'bg-amber-600 text-white'}`}>
+          <button onClick={() => { vibrate(); setIsActive(false); setSeconds(0); }} className="w-14 h-14 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-400 active:scale-90 transition-transform"><RotateCcw size={20} /></button>
+          <button onClick={() => { vibrate(); setIsActive(!isActive); }} className={`w-24 h-24 rounded-full flex items-center justify-center shadow-2xl transition-all active:scale-95 ${isActive ? 'bg-stone-800 text-amber-500 border border-amber-500/20' : 'bg-amber-600 text-white'}`}>
             {isActive ? <Pause size={36} fill="currentColor" /> : <Play size={36} fill="currentColor" className="ml-1" />}
           </button>
-          <button onClick={() => { setIsActive(false); setSeconds(0); setSteepCount(s => s + 1); }} className="w-14 h-14 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-200 font-bold active:scale-90 transition-transform">#{steepCount}</button>
+          <button onClick={() => { vibrate(); setIsActive(false); setSeconds(0); setSteepCount(s => s + 1); }} className="w-14 h-14 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-200 font-bold active:scale-90 transition-transform">#{steepCount}</button>
         </div>
       </div>
     </div>
