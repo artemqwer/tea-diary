@@ -58,7 +58,7 @@ export default async function Page() {
   return (
     <TeaDashboard
       initialTeas={teas}
-      initialSessions={allSessions} // Передаємо всю історію для вкладки "Історія"
+      initialSessions={JSON.parse(JSON.stringify(allSessions))} // Serialize to avoid "Date object" warning on Vercel
       stats={displayStats}
       user={currentUser || session.user}
     />
