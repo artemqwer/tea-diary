@@ -16,7 +16,7 @@ export default async function Page() {
   const monthStart = startOfMonth(now);
 
   // Завантажуємо дані паралельно
-  const [teas, allSessions] = await Promise.all([
+  const [teas, allSessions, currentUser] = await Promise.all([
     prisma.tea.findMany({
       where: { userId },
       orderBy: { name: 'asc' }
@@ -29,6 +29,9 @@ export default async function Page() {
         }
       },
       orderBy: { date: 'desc' }
+    }),
+    prisma.user.findUnique({
+      where: { id: userId }
     })
   ]);
 
@@ -57,7 +60,7 @@ export default async function Page() {
       initialTeas={teas}
       initialSessions={allSessions} // Передаємо всю історію для вкладки "Історія"
       stats={displayStats}
-      user={session.user}
+      user={currentUser || session.user}
     />
   );
 }
