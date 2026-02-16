@@ -6,7 +6,7 @@ import { startOfMonth } from "date-fns"; // Рекомендую встанов�
 
 export default async function Page() {
   const session = await auth();
-  
+
   if (!session?.user) {
     redirect("/api/auth/signin");
   }
@@ -23,10 +23,10 @@ export default async function Page() {
     }),
     prisma.session.findMany({
       where: { userId },
-      include: { 
+      include: {
         tea: {
           select: { name: true, type: true }
-        } 
+        }
       },
       orderBy: { date: 'desc' }
     })
@@ -38,7 +38,7 @@ export default async function Page() {
   const monthlyStats = monthlySessions.reduce((acc, s) => {
     // Об'єм води: кількість проливів * об'єм посуду (мл)
     const sessionVolumeLiters = (s.steeps * s.volume) / 1000;
-    
+
     return {
       liters: acc.liters + sessionVolumeLiters,
       seconds: acc.seconds + s.duration
@@ -53,10 +53,11 @@ export default async function Page() {
   };
 
   return (
-    <TeaDashboard 
-      initialTeas={teas} 
+    <TeaDashboard
+      initialTeas={teas}
       initialSessions={allSessions} // Передаємо всю історію для вкладки "Історія"
       stats={displayStats}
+      user={session.user}
     />
   );
 }

@@ -14,7 +14,7 @@ export async function addTeaAction(data: {
 }) {
   const session = await auth();
   const userId = session?.user?.id;
-  
+
   if (!userId) throw new Error("Unauthorized");
 
   await prisma.tea.create({
@@ -44,7 +44,7 @@ export async function deleteTeaAction(teaId: string) {
     await prisma.tea.delete({
       where: {
         id: teaId,
-        userId: userId 
+        userId: userId
       }
     });
     revalidatePath("/");
@@ -87,4 +87,19 @@ export async function addSessionAction(data: {
 // --- ВИХІД З АКАУНТУ (НОВЕ) ---
 export async function signOutAction() {
   await signOut();
+}
+
+// --- ОНОВЛЕННЯ АВАТАРУ (НОВЕ) ---
+export async function updateUserAvatarAction(imageUrl: string) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) throw new Error("Unauthorized");
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { image: imageUrl }
+  });
+
+  revalidatePath("/");
 }

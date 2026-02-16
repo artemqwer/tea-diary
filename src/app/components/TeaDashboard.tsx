@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { 
-  Play, Pause, RotateCcw, Plus, Home, History, 
-  Droplets, Clock, Leaf, ChevronRight, Search, 
+import {
+  Play, Pause, RotateCcw, Plus, Home, History,
+  Droplets, Clock, Leaf, ChevronRight, Search,
   X, Pencil, Save, Trash2, AlertTriangle, Star,
-  User, LogOut, Settings
+  User, LogOut, Settings, Camera, RefreshCw
 } from 'lucide-react';
-import { addTeaAction, deleteTeaAction, addSessionAction } from './../actions';
+import { addTeaAction, deleteTeaAction, addSessionAction, updateUserAvatarAction } from './../actions';
 import { signOut } from 'next-auth/react';
 
 // --- ТИПИ ---
@@ -52,10 +52,83 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }: any) 
   );
 };
 
+// --- МОДАЛКА ВИБОРУ АВАТАРА ---
+const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
+  const [seed, setSeed] = useState(Math.random().toString(36).substring(7));
+  const [style, setStyle] = useState('notionists'); // notionists, adventurer, fun-emoji
+
+  const styles = [
+    { id: 'notionists', name: 'Sketch' },
+    { id: 'adventurer', name: 'Adventurer' },
+    { id: 'fun-emoji', name: 'Emoji' },
+    { id: 'bottts', name: 'Robot' }
+  ];
+
+  const avatarUrl = `https://api.dicebear.com/9.x/${style}/svg?seed=${seed}&backgroundColor=transparent`;
+
+  const handleSave = () => {
+    onSelect(avatarUrl);
+    onClose();
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-200">
+      <div className="bg-stone-900 border border-stone-800 w-full max-w-sm rounded-2xl p-6 shadow-2xl relative">
+        <button onClick={onClose} className="absolute right-4 top-4 text-stone-500 hover:text-stone-300"><X size={20} /></button>
+
+        <h3 className="text-xl font-serif text-stone-100 mb-6 text-center">Виберіть образ</h3>
+
+        <div className="flex justify-center mb-8">
+          <div className="w-32 h-32 rounded-full bg-stone-800 border-4 border-amber-600/20 overflow-hidden relative group">
+            <img src={avatarUrl} alt="Avatar Preview" className="w-full h-full object-cover" />
+            <button
+              onClick={() => setSeed(Math.random().toString(36).substring(7))}
+              className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <RefreshCw className="text-white" size={24} />
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-4 gap-2 mb-6">
+          {styles.map(s => (
+            <button
+              key={s.id}
+              onClick={() => setStyle(s.id)}
+              className={`py-2 px-1 rounded-lg text-xs font-medium transition-colors ${style === s.id ? 'bg-amber-600 text-white' : 'bg-stone-800 text-stone-400 hover:bg-stone-700'}`}
+            >
+              {s.name}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => setSeed(Math.random().toString(36).substring(7))}
+            className="flex-1 py-3 rounded-xl bg-stone-800 text-stone-300 font-medium hover:bg-stone-700 transition-colors flex items-center justify-center gap-2"
+          >
+            <RefreshCw size={16} />
+            Випадковий
+          </button>
+          <button
+            onClick={handleSave}
+            className="flex-1 py-3 rounded-xl bg-amber-600 text-white font-medium hover:bg-amber-500 transition-colors"
+          >
+            Зберегти
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- ПРОФІЛЬНЕ МЕНЮ ---
 const UserProfileMenu = ({ user }: { user: any }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Закриття меню при кліку поза ним
@@ -75,39 +148,67 @@ const UserProfileMenu = ({ user }: { user: any }) => {
     await signOut({ callbackUrl: '/login' });
   };
 
+  const handleAvatarUpdate = async (url: string) => {
+    // Оптимістичне оновлення (можна додати, але поки просто чекаєм)
+    await updateUserAvatarAction(url);
+    // Примусове оновлення сторінки щоб підтягнути нову сесію, 
+    // хоча в NextAuth сесія може кешуватися.
+    window.location.reload();
+  };
+
   const getInitials = (name?: string) => {
     if (!name) return 'U';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
+  const Avatar = ({ className, size = 'sm' }: { className?: string, size?: 'sm' | 'lg' }) => {
+    if (user?.image) {
+      return <img src={user.image} alt={user.name} className={`${className} object-cover`} />;
+    }
+    return (
+      <div className={`${className} bg-gradient-to-br from-amber-600 to-amber-700 flex items-center justify-center text-white font-bold ${size === 'lg' ? 'text-xl' : 'text-xs'}`}>
+        {getInitials(user?.name)}
+      </div>
+    );
+  };
+
   return (
     <>
       <div ref={menuRef} className="relative">
-        <button 
+        <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-600 to-amber-700 border-2 border-stone-700 flex items-center justify-center text-xs font-bold text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all active:scale-95"
+          className="rounded-full border-2 border-stone-700 shadow-lg hover:shadow-xl hover:scale-105 transition-all active:scale-95 overflow-hidden"
         >
-          {getInitials(user?.name)}
+          <Avatar className="w-10 h-10" />
         </button>
 
         {isOpen && (
-          <div className="absolute right-0 top-12 w-64 bg-stone-900 border border-stone-800 rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-top-2 duration-200 z-50">
+          <div className="absolute right-0 top-12 w-72 bg-stone-900 border border-stone-800 rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-top-2 duration-200 z-50">
             {/* Інфо про користувача */}
             <div className="p-4 border-b border-stone-800 bg-stone-900/50">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-600 to-amber-700 flex items-center justify-center text-lg font-bold text-white">
-                  {getInitials(user?.name)}
+              <div className="flex items-center gap-4 mb-2">
+                <div className="relative group cursor-pointer" onClick={() => setShowAvatarModal(true)}>
+                  <Avatar className="w-16 h-16 rounded-full border-2 border-stone-700" size="lg" />
+                  <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Camera size={20} className="text-white" />
+                  </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-stone-100 truncate">{user?.name || 'Користувач'}</h4>
+                  <h4 className="font-medium text-stone-100 truncate text-lg">{user?.name || 'Користувач'}</h4>
                   <p className="text-xs text-stone-500 truncate">{user?.email || 'email@example.com'}</p>
                 </div>
               </div>
+              <button
+                onClick={() => setShowAvatarModal(true)}
+                className="w-full mt-2 py-1.5 text-xs font-medium text-stone-400 bg-stone-800/50 rounded-lg hover:bg-stone-800 transition-colors"
+              >
+                Змінити аватар
+              </button>
             </div>
 
             {/* Меню опцій */}
             <div className="p-2">
-              <button 
+              <button
                 onClick={() => {
                   setIsOpen(false);
                   setShowLogoutModal(true);
@@ -123,12 +224,19 @@ const UserProfileMenu = ({ user }: { user: any }) => {
       </div>
 
       {/* Модалка підтвердження виходу */}
-      <ConfirmationModal 
+      <ConfirmationModal
         isOpen={showLogoutModal}
         onClose={() => setShowLogoutModal(false)}
         onConfirm={handleLogout}
         title="Вийти з акаунту?"
         message="Ви впевнені, що хочете вийти? Ваші дані будуть збережені."
+      />
+
+      {/* Модалка вибору аватара */}
+      <AvatarSelectionModal
+        isOpen={showAvatarModal}
+        onClose={() => setShowAvatarModal(false)}
+        onSelect={handleAvatarUpdate}
       />
     </>
   );
@@ -166,29 +274,29 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
       <div className="bg-stone-900 border border-stone-800 w-full max-w-md rounded-2xl p-6 shadow-2xl animate-in slide-in-from-bottom-10 sm:zoom-in-95 duration-200">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-serif text-stone-100">Додати в колекцію</h2>
-          <button onClick={onClose} className="text-stone-500 hover:text-stone-300"><X size={24}/></button>
+          <button onClick={onClose} className="text-stone-500 hover:text-stone-300"><X size={24} /></button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className={labelClass}>Назва чаю</label>
-            <input 
+            <input
               required
               autoFocus
               className={inputClass}
               placeholder="Напр. Lao Ban Zhang"
               value={formData.name}
-              onChange={e => setFormData({...formData, name: e.target.value})}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-             <div>
+            <div>
               <label className={labelClass}>Тип</label>
-              <select 
+              <select
                 className={`${inputClass} appearance-none`}
                 value={formData.type}
-                onChange={e => setFormData({...formData, type: e.target.value})}
+                onChange={e => setFormData({ ...formData, type: e.target.value })}
               >
                 <option value="Пуер">Пуер (Puer)</option>
                 <option value="Улун">Улун (Oolong)</option>
@@ -197,37 +305,37 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
                 <option value="Білий">Білий (White)</option>
                 <option value="Хей Ча">Хей Ча (Dark)</option>
               </select>
-             </div>
-             <div>
+            </div>
+            <div>
               <label className={labelClass}>Рік</label>
-              <input 
+              <input
                 type="number"
                 className={inputClass}
                 value={formData.year}
-                onChange={e => setFormData({...formData, year: Number(e.target.value)})}
+                onChange={e => setFormData({ ...formData, year: Number(e.target.value) })}
               />
-             </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-             <div>
+            <div>
               <label className={labelClass}>Регіон</label>
-              <input 
+              <input
                 className={inputClass}
                 placeholder="Напр. Menghai"
                 value={formData.origin}
-                onChange={e => setFormData({...formData, origin: e.target.value})}
+                onChange={e => setFormData({ ...formData, origin: e.target.value })}
               />
-             </div>
-             <div>
+            </div>
+            <div>
               <label className={labelClass}>Вага (г)</label>
-              <input 
+              <input
                 type="number"
                 className={inputClass}
                 value={formData.total}
-                onChange={e => setFormData({...formData, total: Number(e.target.value)})}
+                onChange={e => setFormData({ ...formData, total: Number(e.target.value) })}
               />
-             </div>
+            </div>
           </div>
 
           <button type="submit" className="w-full bg-amber-600 hover:bg-amber-500 text-white font-medium py-4 rounded-xl mt-4 shadow-lg shadow-amber-900/20 active:scale-95 transition-all">
@@ -277,7 +385,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
       <div className="fixed inset-0 bg-stone-950 z-[80] flex flex-col items-center justify-center p-8 animate-in zoom-in-95 duration-200">
         <h2 className="text-2xl font-serif text-stone-100 mb-2">Як вам чай?</h2>
         <p className="text-stone-500 mb-8 text-center">{tea.name} ({tea.year})</p>
-        
+
         <div className="flex gap-2 mb-12">
           {[1, 2, 3, 4, 5].map((star) => (
             <button key={star} onClick={() => setRating(star)} className="p-1">
@@ -303,7 +411,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
 
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         <h2 className="text-2xl text-stone-200 font-serif mb-8 text-center">{tea.name}</h2>
-        
+
         <div className="grid grid-cols-3 gap-3 w-full max-w-sm mb-12">
           <div className="bg-stone-900/50 p-3 rounded-xl border border-stone-800 flex flex-col items-center">
             <span className="text-[10px] text-stone-500 uppercase mb-1">Вода</span>
@@ -352,15 +460,15 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
   const [activeTab, setActiveTab] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTea, setActiveTea] = useState<Tea | null>(null);
-  
+
   // Стан для модалки додавання
   const [isAddModalOpen, setAddModalOpen] = useState(false);
-  
+
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, teaId: '', teaName: '' });
 
   const filteredTeas = useMemo(() => {
-    return initialTeas.filter(t => 
-      t.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    return initialTeas.filter(t =>
+      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       t.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
       t.origin.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -373,14 +481,14 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
 
   return (
     <div className="min-h-dvh bg-stone-950 text-stone-100 selection:bg-amber-500/30">
-      
+
       {activeTea && <ActiveSessionView tea={activeTea} onClose={() => setActiveTea(null)} />}
-      
+
       {/* Підключили модалку додавання */}
       {isAddModalOpen && <AddTeaModal onClose={() => setAddModalOpen(false)} />}
 
-      <ConfirmationModal 
-        isOpen={deleteModal.isOpen} 
+      <ConfirmationModal
+        isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
         onConfirm={async () => { await deleteTeaAction(deleteModal.teaId); setDeleteModal({ ...deleteModal, isOpen: false }); }}
         title="Видалити чай?"
@@ -471,7 +579,7 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
               </div>
 
               {/* Кнопка тепер відкриває модалку */}
-              <button 
+              <button
                 onClick={() => setAddModalOpen(true)}
                 className="w-full py-4 rounded-xl border border-dashed border-stone-800 text-stone-500 hover:text-amber-500 hover:border-amber-500/50 transition-all flex items-center justify-center gap-2"
               >
@@ -481,23 +589,23 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
           )}
 
           {activeTab === 'history' && (
-             <div className="space-y-4 animate-in fade-in duration-500">
-               <h2 className="text-xl font-serif mb-6">Історія заварювань</h2>
-               {initialSessions.map(session => (
-                 <div key={session.id} className="bg-stone-900 border border-stone-800 p-4 rounded-xl">
-                   <div className="flex justify-between items-start mb-2">
-                     <h4 className="font-medium">{session.tea?.name || 'Видалений чай'}</h4>
-                     <div className="flex gap-0.5">
-                        {[...Array(5)].map((_, i) => <div key={i} className={`w-1 h-1 rounded-full ${i < session.rating ? 'bg-amber-500' : 'bg-stone-700'}`} />)}
-                     </div>
-                   </div>
-                   <div className="flex justify-between text-[10px] text-stone-500 uppercase tracking-widest">
-                     <span>{new Date(session.date).toLocaleDateString()}</span>
-                     <span>{session.steeps} проливів • {Math.floor(session.duration / 60)}хв</span>
-                   </div>
-                 </div>
-               ))}
-             </div>
+            <div className="space-y-4 animate-in fade-in duration-500">
+              <h2 className="text-xl font-serif mb-6">Історія заварювань</h2>
+              {initialSessions.map(session => (
+                <div key={session.id} className="bg-stone-900 border border-stone-800 p-4 rounded-xl">
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-medium">{session.tea?.name || 'Видалений чай'}</h4>
+                    <div className="flex gap-0.5">
+                      {[...Array(5)].map((_, i) => <div key={i} className={`w-1 h-1 rounded-full ${i < session.rating ? 'bg-amber-500' : 'bg-stone-700'}`} />)}
+                    </div>
+                  </div>
+                  <div className="flex justify-between text-[10px] text-stone-500 uppercase tracking-widest">
+                    <span>{new Date(session.date).toLocaleDateString()}</span>
+                    <span>{session.steeps} проливів • {Math.floor(session.duration / 60)}хв</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </main>
       </div>
