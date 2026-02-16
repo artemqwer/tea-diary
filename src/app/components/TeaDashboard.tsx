@@ -543,16 +543,16 @@ const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
   }, [sessions]);
 
   return (
-    <div className="bg-stone-900/30 border border-stone-800/50 p-5 rounded-2xl">
+    <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl shadow-sm">
       <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-2 text-stone-400">
+        <div className="flex items-center gap-2 text-stone-300">
           <Calendar size={16} />
           <span className="text-xs font-bold uppercase tracking-widest">Рік Чаю</span>
         </div>
         <span className="text-xs text-stone-500 font-mono">{totalSessions} сесій за рік</span>
       </div>
 
-      <div ref={scrollRef} className="overflow-x-auto pb-2 scrollbar-none" style={{ maskImage: "linear-gradient(to right, transparent, black 10px)" }}>
+      <div ref={scrollRef} className="overflow-x-auto pb-2 scrollbar-none">
         <div className="flex gap-[3px] min-w-max pl-2">
           {grids.map((week, i) => (
             <div key={i} className="flex flex-col gap-[3px]">
@@ -632,7 +632,10 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
         <header className="px-6 pt-12 pb-6 flex justify-between items-end bg-gradient-to-b from-stone-900/40 to-transparent">
           <div>
             <p className="text-stone-500 text-sm mb-1">Сьогодні {new Date().toLocaleDateString('uk-UA', { weekday: 'long' })}</p>
-            <h1 className="text-2xl font-serif text-stone-100">Час Чаю</h1>
+            <div className="flex items-baseline gap-2">
+              <h1 className="text-2xl font-serif text-stone-100">Час Чаю</h1>
+              <span className="text-[10px] text-stone-600 font-mono">v1.2</span>
+            </div>
           </div>
           <UserProfileMenu user={currentUser} onUserUpdate={setCurrentUser} />
         </header>
