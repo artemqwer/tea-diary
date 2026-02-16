@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "Tea Diary",
   description: "Дневник китайского чая",
   manifest: "/manifest.json",
+  icons: {
+    apple: "/icons/icon.svg",
+  },
 };
 
 export const viewport: Viewport = {

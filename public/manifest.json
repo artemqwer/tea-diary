@@ -1,0 +1,24 @@
+{
+    "name": "Tea Diary",
+    "short_name": "TeaDiary",
+    "description": "Ваш персональний щоденник для медитативних чаювань",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0c0a09",
+    "theme_color": "#0c0a09",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/icons/icon.svg",
+            "sizes": "192x192",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon.svg",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}
