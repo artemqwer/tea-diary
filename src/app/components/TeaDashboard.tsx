@@ -602,7 +602,7 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
                     <div key={tea.id} onClick={() => setActiveTea(tea)} className="bg-stone-900 border border-stone-800 rounded-2xl p-4 active:scale-98 transition-transform cursor-pointer group">
                       <div className="flex justify-between items-start mb-2">
                         <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border border-stone-700 bg-stone-800/50 text-stone-400">{tea.type}</span>
-                        <button onClick={(e) => confirmDelete(e, tea)} className="text-stone-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 size={18} /></button>
+                        <button onClick={(e) => confirmDelete(e, tea)} className="text-stone-600 hover:text-red-400 transition-colors p-1"><Trash2 size={18} /></button>
                       </div>
                       <div className="flex justify-between items-end mb-3">
                         <h3 className="text-stone-100 font-medium text-lg">{tea.name}</h3>
