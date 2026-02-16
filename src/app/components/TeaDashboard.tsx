@@ -366,11 +366,15 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
   const [rating, setRating] = useState(5);
   const [showSummary, setShowSummary] = useState(false);
 
+  // Загальний час сесії (медитація)
+  const [sessionDuration, setSessionDuration] = useState(0);
+
   // Параметри заварювання
   const [temp, setTemp] = useState(95);
   const [grams, setGrams] = useState(7);
   const [volume, setVolume] = useState(120);
 
+  // Таймер поточного пролива
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (isActive) {
@@ -379,10 +383,16 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
     return () => { if (interval) clearInterval(interval); };
   }, [isActive]);
 
+  // Таймер загальної тривалості (медитації) - тикає завжди поки відкрито вікно
+  useEffect(() => {
+    const interval = setInterval(() => setSessionDuration(s => s + 1), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const handleFinish = async () => {
     await addSessionAction({
       teaId: tea.id,
-      duration: seconds,
+      duration: sessionDuration, // Зберігаємо саме загальний час сесії
       steeps: steepCount,
       grams: grams,
       volume: volume,
@@ -391,11 +401,18 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
     onClose();
   };
 
+  const formatTime = (totalSeconds: number) => {
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   if (showSummary) {
     return (
       <div className="fixed inset-0 bg-stone-950 z-[80] flex flex-col items-center justify-center p-8 animate-in zoom-in-95 duration-200">
         <h2 className="text-2xl font-serif text-stone-100 mb-2">Як вам чай?</h2>
-        <p className="text-stone-500 mb-8 text-center">{tea.name} ({tea.year})</p>
+        <p className="text-stone-500 mb-6 text-center">{tea.name} ({tea.year})</p>
+        <p className="text-amber-600/60 font-mono text-sm mb-8">Час медитації: {formatTime(sessionDuration)}</p>
 
         <div className="flex gap-2 mb-12">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -416,7 +433,10 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
     <div className="fixed inset-0 bg-stone-950 z-[70] flex flex-col h-dvh overflow-hidden">
       <div className="flex justify-between items-center p-6 pt-12">
         <button onClick={onClose} className="text-stone-400 flex items-center gap-1"><ChevronRight className="rotate-180" size={20} /> Назад</button>
-        <span className="text-stone-500 text-xs tracking-widest uppercase">Gongfu Session</span>
+        <div className="flex flex-col items-center">
+          <span className="text-stone-500 text-xs tracking-widest uppercase">Gongfu Session</span>
+          <span className="text-amber-600/50 font-mono text-xs mt-0.5">{formatTime(sessionDuration)}</span>
+        </div>
         <button onClick={() => setShowSummary(true)} className="text-amber-500 font-bold">Фініш</button>
       </div>
 
@@ -452,6 +472,8 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
           <div className="text-7xl font-light text-stone-100 tabular-nums">
             {seconds}<span className="text-2xl text-stone-600">s</span>
           </div>
+          {/* Маленький індикатор загального часу всередині кола (опціонально, але корисно) */}
+          <div className="absolute bottom-12 text-stone-600 text-xs tracking-wider uppercase opacity-50">Meditate</div>
         </div>
 
         <div className="flex items-center gap-8 mb-8">
