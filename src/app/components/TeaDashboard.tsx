@@ -5,7 +5,7 @@ import {
   Play, Pause, RotateCcw, Plus, Home, History,
   Droplets, Clock, Leaf, ChevronRight, Search,
   X, Pencil, Save, Trash2, AlertTriangle, Star,
-  User, LogOut, Settings, Camera, RefreshCw
+  User, LogOut, Settings, Camera, RefreshCw, Calendar
 } from 'lucide-react';
 import { addTeaAction, deleteTeaAction, addSessionAction, updateUserAvatarAction } from './../actions';
 import { useRouter } from 'next/navigation';
@@ -494,6 +494,95 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
   );
 };
 
+// --- ГРАФІК АКТИВНОСТІ (GITHUB STYLE) ---
+const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Scroll to end (today) on mount
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+    }
+  }, []);
+
+  const { grids, totalSessions } = useMemo(() => {
+    // We want roughly 52 weeks (1 year) ending today
+    const weeks = [];
+    const today = new Date();
+    const totalSessions = sessions.length;
+
+    // Calculate start date: Today - 52 weeks (approx 364 days)
+    // Adjust start date to be a Monday so the grid aligns correctly
+    const daysToShow = 52 * 7;
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - daysToShow);
+
+    // Adjust startDate back to the nearest Monday
+    const dayOfWeek = startDate.getDay(); // 0 is Sunday
+    const diff = startDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+    startDate.setDate(diff);
+
+    let currentDate = new Date(startDate);
+    // Loop until we reach today (or end of this week)
+    while (currentDate <= today) {
+      const week = [];
+      for (let i = 0; i < 7; i++) {
+        const dateStr = currentDate.toDateString();
+        // Check if there are sessions for this day
+        // Note: sessions.date is likely a string or Date object. 
+        // In the component props it comes as serialized JSON often, passing Dates might need conversion if not strictly typed.
+        // Assuming sessions props retain Date objects or ISO strings.
+        const count = sessions.filter(s => new Date(s.date).toDateString() === dateStr).length;
+
+        week.push({ date: new Date(currentDate), count });
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      weeks.push(week);
+    }
+    return { grids: weeks, totalSessions };
+  }, [sessions]);
+
+  return (
+    <div className="bg-stone-900/30 border border-stone-800/50 p-5 rounded-2xl">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-2 text-stone-400">
+          <Calendar size={16} />
+          <span className="text-xs font-bold uppercase tracking-widest">Рік Чаю</span>
+        </div>
+        <span className="text-xs text-stone-500 font-mono">{totalSessions} сесій за рік</span>
+      </div>
+
+      <div ref={scrollRef} className="overflow-x-auto pb-2 scrollbar-none" style={{ maskImage: "linear-gradient(to right, transparent, black 10px)" }}>
+        <div className="flex gap-[3px] min-w-max pl-2">
+          {grids.map((week, i) => (
+            <div key={i} className="flex flex-col gap-[3px]">
+              {week.map((day, j) => (
+                <div
+                  key={j}
+                  className={`w-2.5 h-2.5 rounded-sm transition-colors ${day.count === 0 ? 'bg-stone-800/40' :
+                    day.count === 1 ? 'bg-amber-900/60' :
+                      day.count <= 3 ? 'bg-amber-700/80' :
+                        'bg-amber-500'
+                    }`}
+                  title={`${day.date.toLocaleDateString()}: ${day.count} sessions`}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="flex items-center gap-2 mt-3 text-[10px] text-stone-600 justify-end">
+        <span>Less</span>
+        <div className="w-2 h-2 rounded-sm bg-stone-800/40" />
+        <div className="w-2 h-2 rounded-sm bg-amber-900/60" />
+        <div className="w-2 h-2 rounded-sm bg-amber-700/80" />
+        <div className="w-2 h-2 rounded-sm bg-amber-500" />
+        <span>More</span>
+      </div>
+    </div>
+  );
+}
+
 // --- ГОЛОВНИЙ ДАШБОРД ---
 export default function TeaDashboard({ initialTeas, initialSessions, stats, user }: { initialTeas: Tea[], initialSessions: any[], stats: any, user?: any }) {
   const [activeTab, setActiveTab] = useState('home');
@@ -558,6 +647,8 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
                 </div>
                 <div className="bg-white/20 p-3 rounded-full group-hover:scale-110 transition-transform"><Play fill="currentColor" size={24} /></div>
               </button>
+
+              <ContributionGraph sessions={initialSessions} />
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-stone-900/50 border border-stone-800/50 p-4 rounded-2xl">
