@@ -8,6 +8,7 @@ import {
   User, LogOut, Settings, Camera, RefreshCw
 } from 'lucide-react';
 import { addTeaAction, deleteTeaAction, addSessionAction, updateUserAvatarAction } from './../actions';
+import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 
 // --- ТИПИ ---
@@ -125,7 +126,8 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
 };
 
 // --- ПРОФІЛЬНЕ МЕНЮ ---
-const UserProfileMenu = ({ user }: { user: any }) => {
+const UserProfileMenu = ({ user, onUserUpdate }: { user: any, onUserUpdate: (newUser: any) => void }) => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
@@ -149,11 +151,20 @@ const UserProfileMenu = ({ user }: { user: any }) => {
   };
 
   const handleAvatarUpdate = async (url: string) => {
-    // Оптимістичне оновлення (можна додати, але поки просто чекаєм)
-    await updateUserAvatarAction(url);
-    // Примусове оновлення сторінки щоб підтягнути нову сесію, 
-    // хоча в NextAuth сесія може кешуватися.
-    window.location.reload();
+    try {
+      // Оптимістичне оновлення локально
+      const updatedUser = { ...user, image: url };
+      onUserUpdate(updatedUser);
+
+      // Оновлення на сервері
+      await updateUserAvatarAction(url);
+
+      // Оновлення даних сесії (soft refresh)
+      router.refresh();
+    } catch (e) {
+      console.error("Avatar update failed", e);
+      // Можна додати тост з помилкою
+    }
   };
 
   const getInitials = (name?: string) => {
@@ -460,6 +471,11 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
   const [activeTab, setActiveTab] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTea, setActiveTea] = useState<Tea | null>(null);
+  const [currentUser, setCurrentUser] = useState(user);
+
+  useEffect(() => {
+    setCurrentUser(user);
+  }, [user]);
 
   // Стан для модалки додавання
   const [isAddModalOpen, setAddModalOpen] = useState(false);
@@ -501,7 +517,7 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
             <p className="text-stone-500 text-sm mb-1">Сьогодні {new Date().toLocaleDateString('uk-UA', { weekday: 'long' })}</p>
             <h1 className="text-2xl font-serif text-stone-100">Час Чаю</h1>
           </div>
-          <UserProfileMenu user={user} />
+          <UserProfileMenu user={currentUser} onUserUpdate={setCurrentUser} />
         </header>
 
         <main className="px-6">
