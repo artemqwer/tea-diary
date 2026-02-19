@@ -3,6 +3,7 @@
 import { prisma } from "../lib/prisma"
 import { auth, signOut } from "../auth" // Додано signOut в імпорт
 import { revalidatePath } from "next/cache"
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // --- ДОДАВАННЯ НОВОГО ЧАЮ ---
 export async function addTeaAction(data: {
@@ -105,7 +106,6 @@ export async function updateUserAvatarAction(imageUrl: string) {
 }
 
 // --- ШІ РОЗПІЗНАВАННЯ ЧАЮ (GEMINI) ---
-import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function analyzeTeaImageAction(formData: FormData) {
   const file = formData.get("image") as File;
