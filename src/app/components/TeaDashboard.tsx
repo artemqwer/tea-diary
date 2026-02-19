@@ -266,6 +266,49 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
 
   const [aiLoading, setAiLoading] = useState(false);
   const [aiData, setAiData] = useState<any>(null);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  const compressImage = (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = document.createElement('img');
+      const reader = new FileReader();
+      reader.onload = (e) => { img.src = e.target?.result as string; };
+      reader.onerror = reject;
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const count = img.width > img.height ? img.width : img.height;
+        const MAX_SIZE = 1024;
+        let width = img.width;
+        let height = img.height;
+
+        if (count > MAX_SIZE) {
+          if (img.width > img.height) {
+            width = MAX_SIZE;
+            height = (img.height * MAX_SIZE) / img.width;
+          } else {
+            height = MAX_SIZE;
+            width = (img.width * MAX_SIZE) / img.height;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return reject('No context');
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject('Canvas error');
+        }, 'image/jpeg', 0.7);
+      };
+
+      reader.readAsDataURL(file);
+    });
+  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -273,21 +316,32 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
 
     setAiLoading(true);
     setAiData(null);
+    setAiError(null);
 
-    const formData = new FormData();
-    formData.append("image", file);
+    try {
+      const compressedBlob = await compressImage(file);
+      const formData = new FormData();
+      formData.append("image", compressedBlob as Blob);
 
-    const result = await analyzeTeaImageAction(formData);
+      const result = await analyzeTeaImageAction(formData);
 
-    setAiLoading(false);
-
-    if (result && !result.error) {
-      setAiData(result);
-    } else {
-      // Handle error (maybe show toast)
-      console.error(result?.error);
+      if (result && !result.error) {
+        setAiData(result);
+      } else {
+        setAiError(result?.error || "Не вдалося розпізнати фото");
+      }
+    } catch (e) {
+      console.error(e);
+      setAiError("Помилка обробки зображення");
+    } finally {
+      setAiLoading(false);
+      // Reset input to allow selecting same file again
+      e.target.value = '';
     }
   };
+
+
+
 
   const applyAiData = () => {
     if (aiData) {
@@ -341,6 +395,14 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
             <div className="w-full bg-stone-800/50 border border-stone-700 rounded-xl p-4 flex items-center justify-center gap-3">
               <RefreshCw className="animate-spin text-amber-500" size={20} />
               <span className="text-stone-400 text-sm">Аналізую чай... 🍵</span>
+            </div>
+          )}
+
+          {aiError && (
+            <div className="bg-red-900/10 border border-red-900/30 rounded-xl p-4 flex items-center gap-3 mb-2 animate-in fade-in">
+              <AlertTriangle className="text-red-500" size={20} />
+              <span className="text-red-400 text-sm">{aiError}</span>
+              <button onClick={() => setAiError(null)} className="ml-auto text-stone-500"><X size={16} /></button>
             </div>
           )}
 
