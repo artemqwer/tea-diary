@@ -103,3 +103,51 @@ export async function updateUserAvatarAction(imageUrl: string) {
 
   revalidatePath("/");
 }
+
+// --- ШІ РОЗПІЗНАВАННЯ ЧАЮ (GEMINI) ---
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+export async function analyzeTeaImageAction(formData: FormData) {
+  const file = formData.get("image") as File;
+  if (!file) return { error: "No image provided" };
+
+  try {
+    const buffer = await file.arrayBuffer();
+    const base64Image = Buffer.from(buffer).toString("base64");
+
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || "");
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const prompt = `Analyze this image of a tea packaging or cake. 
+    Extract the following information and return ONLY a valid JSON object:
+    {
+      "name": "Name of the tea (e.g., Menghai 7572)",
+      "type": "Type of tea (e.g., Puer, Oolong, Red)",
+      "year": 2024 (number),
+      "origin": "Region (e.g., Yunnan, Menghai)"
+    }
+    If you cannot identify something, use reasonable guesses or empty strings.
+    If it's clearly not tea, return {"error": "Not a tea"}.`;
+
+    const result = await model.generateContent([
+      prompt,
+      {
+        inlineData: {
+          data: base64Image,
+          mimeType: file.type,
+        },
+      },
+    ]);
+
+    const response = await result.response;
+    const text = response.text();
+
+    // Clean up markdown code blocks if present
+    const cleanJson = text.replace(/```json|```/g, "").trim();
+
+    return JSON.parse(cleanJson);
+  } catch (error) {
+    console.error("AI Analysis failed:", error);
+    return { error: "Failed to analyze image" };
+  }
+}

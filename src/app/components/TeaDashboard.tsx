@@ -1,15 +1,16 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { addTeaAction, deleteTeaAction, addSessionAction, updateUserAvatarAction, analyzeTeaImageAction } from './../actions';
+import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
+
 import {
   Play, Pause, RotateCcw, Plus, Home, History,
   Droplets, Clock, Leaf, ChevronRight, Search,
   X, Pencil, Save, Trash2, AlertTriangle, Star,
-  User, LogOut, Settings, Camera, RefreshCw, Calendar
+  User, LogOut, Settings, Camera, RefreshCw, Calendar, Sparkles, Upload
 } from 'lucide-react';
-import { addTeaAction, deleteTeaAction, addSessionAction, updateUserAvatarAction } from './../actions';
-import { useRouter } from 'next/navigation';
-import { signOut } from 'next-auth/react';
 
 // --- ТИПИ ---
 type Tea = {
@@ -263,6 +264,44 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
     total: 357, // Стандартна вага бліна
   });
 
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiData, setAiData] = useState<any>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setAiLoading(true);
+    setAiData(null);
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const result = await analyzeTeaImageAction(formData);
+
+    setAiLoading(false);
+
+    if (result && !result.error) {
+      setAiData(result);
+    } else {
+      // Handle error (maybe show toast)
+      console.error(result?.error);
+    }
+  };
+
+  const applyAiData = () => {
+    if (aiData) {
+      setFormData({
+        ...formData,
+        name: aiData.name || formData.name,
+        type: aiData.type || formData.type,
+        year: aiData.year || formData.year,
+        origin: aiData.origin || formData.origin,
+      });
+      setAiData(null);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name) return;
@@ -282,10 +321,54 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-4">
-      <div className="bg-stone-900 border border-stone-800 w-full max-w-md rounded-2xl p-6 shadow-2xl animate-in slide-in-from-bottom-10 sm:zoom-in-95 duration-200">
+      <div className="bg-stone-900 border border-stone-800 w-full max-w-md rounded-2xl p-6 shadow-2xl animate-in slide-in-from-bottom-10 sm:zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-serif text-stone-100">Додати в колекцію</h2>
           <button onClick={onClose} className="text-stone-500 hover:text-stone-300"><X size={24} /></button>
+        </div>
+
+        {/* AI SCAN SECTION */}
+        <div className="mb-6">
+          {!aiLoading && !aiData && (
+            <label className="w-full bg-stone-800/50 hover:bg-stone-800 border border-stone-700 border-dashed rounded-xl p-4 flex items-center justify-center gap-2 cursor-pointer transition-colors group">
+              <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+              <Sparkles className="text-amber-500 group-hover:scale-110 transition-transform" size={20} />
+              <span className="text-stone-400 text-sm font-medium group-hover:text-stone-300">Розпізнати по фото (AI)</span>
+            </label>
+          )}
+
+          {aiLoading && (
+            <div className="w-full bg-stone-800/50 border border-stone-700 rounded-xl p-4 flex items-center justify-center gap-3">
+              <RefreshCw className="animate-spin text-amber-500" size={20} />
+              <span className="text-stone-400 text-sm">Аналізую чай... 🍵</span>
+            </div>
+          )}
+
+          {aiData && (
+            <div className="bg-amber-900/10 border border-amber-500/20 rounded-xl p-4 animate-in fade-in zoom-in-95">
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex items-center gap-2 text-amber-500">
+                  <Sparkles size={16} />
+                  <span className="text-xs font-bold uppercase tracking-widest">AI знайшов це</span>
+                </div>
+                <button onClick={() => setAiData(null)} className="text-stone-500 hover:text-stone-300"><X size={16} /></button>
+              </div>
+
+              <div className="space-y-1 mb-4 text-sm text-stone-300">
+                <p><span className="text-stone-500">Назва:</span> {aiData.name}</p>
+                <p><span className="text-stone-500">Тип:</span> {aiData.type}</p>
+                <p><span className="text-stone-500">Рік:</span> {aiData.year}</p>
+                <p><span className="text-stone-500">Регіон:</span> {aiData.origin}</p>
+              </div>
+
+              <div className="flex gap-2">
+                <button onClick={applyAiData} className="flex-1 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold py-2 rounded-lg transition-colors">
+                  Заповнити форму
+                </button>
+              </div>
+              <p className="text-[10px] text-stone-600 mt-2 text-center">ШІ може помилятись. Перевірте дані.</p>
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
