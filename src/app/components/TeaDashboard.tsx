@@ -579,9 +579,9 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
   const [formData, setFormData] = useState({
     name: '',
     type: 'Пуер',
-    year: new Date().getFullYear(),
+    year: String(new Date().getFullYear()),
     origin: '',
-    total: 357, // Стандартна вага бліна
+    total: '357',
   });
 
   const [isCustomType, setIsCustomType] = useState(false);
@@ -701,9 +701,9 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
       name: formData.name,
       type: finalType,
       color: badgeColor || undefined,
-      year: Number(formData.year),
+      year: Number(formData.year) || new Date().getFullYear(),
       origin: formData.origin,
-      total: Number(formData.total),
+      total: Number(formData.total) || 1,
     });
     onClose();
   };
@@ -831,11 +831,11 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
             <div>
               <label className={labelClass} style={labelStyle}>Рік</label>
               <input
-                type="number"
+                inputMode="numeric"
                 className={inputClass}
                 style={inputStyle}
                 value={formData.year}
-                onChange={e => setFormData({ ...formData, year: Number(e.target.value) })}
+                onChange={e => setFormData({ ...formData, year: e.target.value.replace(/[^0-9]/g, '') })}
               />
             </div>
           </div>
@@ -854,11 +854,12 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
             <div>
               <label className={labelClass} style={labelStyle}>Вага (г)</label>
               <input
-                type="number"
+                inputMode="numeric"
                 className={inputClass}
                 style={inputStyle}
+                placeholder="357"
                 value={formData.total}
-                onChange={e => setFormData({ ...formData, total: Number(e.target.value) })}
+                onChange={e => setFormData({ ...formData, total: e.target.value.replace(/[^0-9]/g, '') })}
               />
             </div>
           </div>
@@ -1008,21 +1009,21 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
           <div className="p-3 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
             <span className="text-[10px] uppercase mb-1" style={{ color: 'var(--text-muted)' }}>Вода</span>
             <div className="flex items-baseline gap-0.5 font-medium">
-              <input type="number" className="bg-transparent w-10 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={temp} onChange={e => setTemp(Number(e.target.value))} />
+              <input inputMode="numeric" className="bg-transparent w-10 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={temp || ''} onChange={e => setTemp(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)} />
               <span className="text-xs" style={{ color: 'var(--text-muted)' }}>°C</span>
             </div>
           </div>
           <div className="p-3 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
             <span className="text-[10px] uppercase mb-1" style={{ color: 'var(--text-muted)' }}>Лист</span>
             <div className="flex items-baseline gap-0.5 font-medium">
-              <input type="number" className="bg-transparent w-8 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={grams} onChange={e => setGrams(Number(e.target.value))} />
+              <input inputMode="numeric" className="bg-transparent w-8 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={grams || ''} onChange={e => setGrams(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)} />
               <span className="text-xs" style={{ color: 'var(--text-muted)' }}>г</span>
             </div>
           </div>
           <div className="p-3 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
             <span className="text-[10px] uppercase mb-1" style={{ color: 'var(--text-muted)' }}>Посуд</span>
             <div className="flex items-baseline gap-0.5 font-medium">
-              <input type="number" className="bg-transparent w-10 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={volume} onChange={e => setVolume(Number(e.target.value))} />
+              <input inputMode="numeric" className="bg-transparent w-10 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={volume || ''} onChange={e => setVolume(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)} />
               <span className="text-xs" style={{ color: 'var(--text-muted)' }}>мл</span>
             </div>
           </div>
