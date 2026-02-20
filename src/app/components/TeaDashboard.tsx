@@ -5,14 +5,30 @@ import { addTeaAction, deleteTeaAction, addSessionAction, updateUserAvatarAction
 import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { useTheme } from './ThemeProvider';
+import { useVibration } from './useVibration';
 
 import {
   Play, Pause, RotateCcw, Plus, Home, History,
   Droplets, Clock, Leaf, ChevronRight, Search,
   X, Pencil, Save, Trash2, AlertTriangle, Star,
   User, LogOut, Settings, Camera, RefreshCw, Calendar, Sparkles, Upload,
-  Palette, Sun, Moon, Paintbrush
+  Palette, Sun, Moon, Paintbrush, Smartphone
 } from 'lucide-react';
+
+// --- NavButton з вібрацією ---
+const NavButton = ({ tab, icon, label, activeTab, setActiveTab }: { tab: string; icon: React.ReactNode; label: string; activeTab: string; setActiveTab: (t: any) => void }) => {
+  const { tap } = useVibration();
+  return (
+    <button
+      onClick={() => { tap(); setActiveTab(tab); }}
+      className="flex flex-col items-center gap-1 p-2 transition-colors"
+      style={{ color: activeTab === tab ? 'var(--accent)' : 'var(--text-muted)' }}
+    >
+      {icon}
+      <span className="text-[10px] font-medium">{label}</span>
+    </button>
+  );
+};
 
 // --- ТИПИ ---
 type Tea = {
@@ -273,6 +289,7 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
 // --- МОДАЛКА НАЛАШТУВАНЬ ТЕМИ ---
 const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
   const { theme, setTheme, customColors, setCustomColors } = useTheme();
+  const { enabled: vibrationEnabled, setEnabled: setVibrationEnabled, tap } = useVibration();
   const [localColors, setLocalColors] = useState(customColors);
 
   useEffect(() => {
@@ -307,6 +324,7 @@ const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
   };
 
   const handlePresetSelect = (preset: 'dark' | 'light' | 'green' | 'custom') => {
+    tap();
     setTheme(preset);
     if (preset === 'custom') {
       setCustomColors(localColors);
@@ -375,6 +393,31 @@ const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
             ))}
           </div>
         )}
+
+        {/* Vibration toggle */}
+        <div className="pt-4 mt-2" style={{ borderTop: '1px solid var(--border-primary)' }}>
+          <div className="flex items-center justify-between p-3 rounded-xl" style={{ background: 'var(--bg-tertiary)' }}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: vibrationEnabled ? 'var(--accent)' : 'var(--bg-secondary)', color: vibrationEnabled ? 'white' : 'var(--text-muted)' }}>
+                <Smartphone size={20} />
+              </div>
+              <div>
+                <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Вібрація</div>
+                <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Тактильний відгук при натисканні</div>
+              </div>
+            </div>
+            <button
+              onClick={() => setVibrationEnabled(!vibrationEnabled)}
+              className="w-12 h-7 rounded-full transition-all duration-200 relative"
+              style={{ background: vibrationEnabled ? 'var(--accent)' : 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
+            >
+              <div
+                className="w-5 h-5 rounded-full bg-white shadow-sm absolute top-0.5 transition-all duration-200"
+                style={{ left: vibrationEnabled ? '24px' : '2px' }}
+              />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -823,6 +866,8 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
   const [rating, setRating] = useState(5);
   const [showSummary, setShowSummary] = useState(false);
 
+  const { tap, press, success, heavy } = useVibration();
+
   // Загальний час сесії (медитація)
   const [sessionDuration, setSessionDuration] = useState(0);
 
@@ -879,13 +924,13 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
 
         <div className="flex gap-2 mb-12">
           {[1, 2, 3, 4, 5].map((star) => (
-            <button key={star} onClick={() => { setRating(star); vibrate(); }} className="p-1">
+            <button key={star} onClick={() => { setRating(star); tap(); }} className="p-1">
               <Star size={36} fill={star <= rating ? 'var(--accent)' : 'none'} style={{ color: star <= rating ? 'var(--accent)' : 'var(--border-primary)' }} />
             </button>
           ))}
         </div>
 
-        <button onClick={() => { vibrate(); handleFinish(); }} className="w-full max-w-xs py-4 rounded-xl font-bold shadow-lg active:scale-95 transition-transform text-white" style={{ background: 'var(--accent)' }}>
+        <button onClick={() => { success(); handleFinish(); }} className="w-full max-w-xs py-4 rounded-xl font-bold shadow-lg active:scale-95 transition-transform text-white" style={{ background: 'var(--accent)' }}>
           Зберегти в історію
         </button>
       </div>
@@ -895,12 +940,12 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
   return (
     <div className="fixed inset-0 z-[70] flex flex-col h-dvh overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
       <div className="flex justify-between items-center p-6 pt-12">
-        <button onClick={() => { vibrate(); onClose(); }} className="flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}><ChevronRight className="rotate-180" size={20} /> Назад</button>
+        <button onClick={() => { tap(); onClose(); }} className="flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}><ChevronRight className="rotate-180" size={20} /> Назад</button>
         <div className="flex flex-col items-center">
           <span className="text-xs tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>Gongfu Session</span>
           <span className="font-mono text-xs mt-0.5" style={{ color: 'var(--accent)', opacity: 0.5 }}>{formatTime(sessionDuration)}</span>
         </div>
-        <button onClick={() => { vibrate(); setShowSummary(true); }} className="font-bold" style={{ color: 'var(--accent)' }}>Фініш</button>
+        <button onClick={() => { press(); setShowSummary(true); }} className="font-bold" style={{ color: 'var(--accent)' }}>Фініш</button>
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center px-6">
@@ -939,11 +984,11 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
         </div>
 
         <div className="flex items-center gap-8 mb-8">
-          <button onClick={() => { vibrate(); setIsActive(false); setSeconds(0); }} className="w-14 h-14 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}><RotateCcw size={20} /></button>
-          <button onClick={() => { vibrate(); setIsActive(!isActive); }} className="w-24 h-24 rounded-full flex items-center justify-center shadow-2xl transition-all active:scale-95" style={isActive ? { background: 'var(--bg-secondary)', color: 'var(--accent)', border: '1px solid var(--accent-border)' } : { background: 'var(--accent)', color: 'white' }}>
+          <button onClick={() => { tap(); setIsActive(false); setSeconds(0); }} className="w-14 h-14 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}><RotateCcw size={20} /></button>
+          <button onClick={() => { press(); setIsActive(!isActive); }} className="w-24 h-24 rounded-full flex items-center justify-center shadow-2xl transition-all active:scale-95" style={isActive ? { background: 'var(--bg-secondary)', color: 'var(--accent)', border: '1px solid var(--accent-border)' } : { background: 'var(--accent)', color: 'white' }}>
             {isActive ? <Pause size={36} fill="currentColor" /> : <Play size={36} fill="currentColor" className="ml-1" />}
           </button>
-          <button onClick={() => { vibrate(); setIsActive(false); setSeconds(0); setSteepCount(s => s + 1); }} className="w-14 h-14 rounded-full flex items-center justify-center font-bold active:scale-90 transition-transform" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)' }}>#{steepCount}</button>
+          <button onClick={() => { tap(); setIsActive(false); setSeconds(0); setSteepCount(s => s + 1); }} className="w-14 h-14 rounded-full flex items-center justify-center font-bold active:scale-90 transition-transform" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)' }}>#{steepCount}</button>
         </div>
       </div>
     </div>
@@ -1214,9 +1259,9 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
       </div>
 
       <nav className="fixed bottom-0 left-0 right-0 backdrop-blur-lg pb-safe pt-2 px-8 flex justify-between items-center z-50" style={{ background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-primary)', opacity: 0.95 }}>
-        <button onClick={() => setActiveTab('home')} className="flex flex-col items-center gap-1 p-2 transition-colors" style={{ color: activeTab === 'home' ? 'var(--accent)' : 'var(--text-muted)' }}><Home size={24} /><span className="text-[10px] font-medium">Головна</span></button>
-        <button onClick={() => setActiveTab('stash')} className="flex flex-col items-center gap-1 p-2 transition-colors" style={{ color: activeTab === 'stash' ? 'var(--accent)' : 'var(--text-muted)' }}><Leaf size={24} /><span className="text-[10px] font-medium">Сховище</span></button>
-        <button onClick={() => setActiveTab('history')} className="flex flex-col items-center gap-1 p-2 transition-colors" style={{ color: activeTab === 'history' ? 'var(--accent)' : 'var(--text-muted)' }}><History size={24} /><span className="text-[10px] font-medium">Історія</span></button>
+        <NavButton tab="home" icon={<Home size={24} />} label="Головна" activeTab={activeTab} setActiveTab={setActiveTab} />
+        <NavButton tab="stash" icon={<Leaf size={24} />} label="Сховище" activeTab={activeTab} setActiveTab={setActiveTab} />
+        <NavButton tab="history" icon={<History size={24} />} label="Історія" activeTab={activeTab} setActiveTab={setActiveTab} />
       </nav>
     </div>
   );
