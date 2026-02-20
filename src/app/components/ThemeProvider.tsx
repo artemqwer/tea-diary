@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-type ThemeType = 'dark' | 'light' | 'custom';
+type ThemeType = 'dark' | 'light' | 'green' | 'custom';
 
 type CustomColors = {
     accent: string;
@@ -85,6 +85,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
             if (theme === 'light') {
                 root.setAttribute('data-theme', 'light');
+            } else if (theme === 'green') {
+                root.setAttribute('data-theme', 'green');
             } else {
                 root.removeAttribute('data-theme');
             }

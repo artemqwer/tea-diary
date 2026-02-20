@@ -70,6 +70,38 @@
   --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
 }
 
+/* Green Tea theme */
+[data-theme="green"] {
+  --bg-primary: #0a1a0f;
+  --bg-secondary: #112218;
+  --bg-tertiary: #1a3322;
+  --bg-card: #112218;
+  --bg-input: #0a1a0f;
+  --bg-hover: #1a3322;
+  --bg-overlay: rgba(0, 0, 0, 0.8);
+
+  --text-primary: #e8f5e9;
+  --text-secondary: #81c784;
+  --text-muted: #4a7c59;
+
+  --border-primary: #1a3322;
+  --border-secondary: #112218;
+
+  --accent: #66bb6a;
+  --accent-hover: #81c784;
+  --accent-subtle: rgba(102, 187, 106, 0.1);
+  --accent-border: rgba(102, 187, 106, 0.25);
+
+  --danger: #ef4444;
+  --danger-bg: rgba(127, 29, 29, 0.1);
+  --danger-border: rgba(127, 29, 29, 0.3);
+
+  --success: #66bb6a;
+  --success-bg: rgba(102, 187, 106, 0.1);
+
+  --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

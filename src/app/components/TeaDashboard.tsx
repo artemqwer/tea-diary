@@ -276,6 +276,7 @@ const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
   const presets = [
     { id: 'dark' as const, name: 'Темна', icon: <Moon size={20} />, desc: 'Класична темна тема' },
     { id: 'light' as const, name: 'Світла', icon: <Sun size={20} />, desc: 'Легка світла тема' },
+    { id: 'green' as const, name: 'Зелений чай', icon: <Leaf size={20} />, desc: 'Лісова тема матчі' },
     { id: 'custom' as const, name: 'Кастомна', icon: <Paintbrush size={20} />, desc: 'Свої кольори' },
   ];
 
@@ -297,7 +298,7 @@ const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
     }
   };
 
-  const handlePresetSelect = (preset: 'dark' | 'light' | 'custom') => {
+  const handlePresetSelect = (preset: 'dark' | 'light' | 'green' | 'custom') => {
     setTheme(preset);
     if (preset === 'custom') {
       setCustomColors(localColors);
