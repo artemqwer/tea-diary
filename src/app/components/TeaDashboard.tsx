@@ -1077,10 +1077,10 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center px-6">
-        <h2 className="text-xl font-serif mb-4 text-center" style={{ color: 'var(--text-primary)' }}>{tea.name}</h2>
+        <h2 className="text-lg font-serif mb-3 text-center" style={{ color: 'var(--text-primary)' }}>{tea.name}</h2>
 
         {/* ─── Перемикач режиму ──────────────────────────── */}
-        <div className="flex rounded-xl p-1 mb-6 gap-1" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+        <div className="flex rounded-xl p-1 mb-4 gap-1" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
           {(['stopwatch', 'countdown'] as TimerMode[]).map(m => (
             <button
               key={m}
@@ -1097,26 +1097,26 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
         </div>
 
         {/* ─── Параметри ─────────────────────────────────── */}
-        <div className="grid grid-cols-3 gap-3 w-full max-w-sm mb-6">
-          <div className="p-3 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-            <span className="text-[10px] uppercase mb-1" style={{ color: 'var(--text-muted)' }}>Вода</span>
-            <div className="flex items-baseline gap-0.5 font-medium">
-              <input inputMode="numeric" className="bg-transparent w-10 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={temp || ''} onChange={e => setTemp(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)} />
-              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>°C</span>
+        <div className="grid grid-cols-3 gap-2 w-full max-w-xs mb-4">
+          <div className="py-2 px-1 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+            <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>Вода</span>
+            <div className="flex items-baseline gap-0.5 font-medium text-sm">
+              <input inputMode="numeric" className="bg-transparent w-8 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={temp || ''} onChange={e => setTemp(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)} />
+              <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>°C</span>
             </div>
           </div>
-          <div className="p-3 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-            <span className="text-[10px] uppercase mb-1" style={{ color: 'var(--text-muted)' }}>Лист</span>
-            <div className="flex items-baseline gap-0.5 font-medium">
-              <input inputMode="numeric" className="bg-transparent w-8 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={grams || ''} onChange={e => setGrams(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)} />
-              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>г</span>
+          <div className="py-2 px-1 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+            <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>Лист</span>
+            <div className="flex items-baseline gap-0.5 font-medium text-sm">
+              <input inputMode="numeric" className="bg-transparent w-6 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={grams || ''} onChange={e => setGrams(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)} />
+              <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>г</span>
             </div>
           </div>
-          <div className="p-3 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-            <span className="text-[10px] uppercase mb-1" style={{ color: 'var(--text-muted)' }}>Посуд</span>
-            <div className="flex items-baseline gap-0.5 font-medium">
-              <input inputMode="numeric" className="bg-transparent w-10 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={volume || ''} onChange={e => setVolume(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)} />
-              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>мл</span>
+          <div className="py-2 px-1 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+            <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>Посуд</span>
+            <div className="flex items-baseline gap-0.5 font-medium text-sm">
+              <input inputMode="numeric" className="bg-transparent w-8 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={volume || ''} onChange={e => setVolume(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)} />
+              <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>мл</span>
             </div>
           </div>
         </div>
@@ -1124,15 +1124,14 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
         {/* ══════════ РЕЖИМ: СЕКУНДОМІР ══════════ */}
         {mode === 'stopwatch' && (
           <>
-            <div className="relative w-56 h-56 flex items-center justify-center mb-8">
+            <div className="relative w-44 h-44 flex items-center justify-center mb-5">
               <div className="absolute inset-0 border-2 rounded-full transition-all duration-700" style={{ borderColor: isActive ? 'var(--accent)' : 'var(--border-primary)', transform: isActive ? 'scale(1.08)' : 'scale(1)', opacity: isActive ? 0.4 : 1 }} />
-              <div className="text-7xl font-light tabular-nums" style={{ color: 'var(--text-primary)' }}>
-                {seconds}<span className="text-2xl" style={{ color: 'var(--text-muted)' }}>s</span>
+              <div className="text-6xl font-light tabular-nums" style={{ color: 'var(--text-primary)' }}>
+                {seconds}<span className="text-xl" style={{ color: 'var(--text-muted)' }}>s</span>
               </div>
-              <div className="absolute bottom-10 text-[10px] tracking-widest uppercase opacity-40" style={{ color: 'var(--text-muted)' }}>Медитуй</div>
             </div>
 
-            <div className="flex items-center gap-8 mb-4">
+            <div className="flex items-center gap-6 mb-4">
               <button onClick={() => { tap(); setIsActive(false); setSeconds(0); }} className="w-14 h-14 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}><RotateCcw size={20} /></button>
               <button onClick={() => { press(); setIsActive(!isActive); }} className="w-24 h-24 rounded-full flex items-center justify-center shadow-2xl transition-all active:scale-95" style={isActive ? { background: 'var(--bg-secondary)', color: 'var(--accent)', border: '1px solid var(--accent-border)' } : { background: 'var(--accent)', color: 'white' }}>
                 {isActive ? <Pause size={36} fill="currentColor" /> : <Play size={36} fill="currentColor" className="ml-1" />}
@@ -1145,9 +1144,9 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
         {/* ══════════ РЕЖИМ: ТАЙМЕР ══════════ */}
         {mode === 'countdown' && (
           <>
-            {/* Кільце прогресу */}
-            <div className="relative w-56 h-56 flex items-center justify-center mb-6">
-              <svg className="absolute inset-0 w-full h-full -rotate-90">
+            {/* Кільце прогресу — SVG pointer-none, контент z-10 */}
+            <div className="relative w-48 h-48 flex items-center justify-center mb-4">
+              <svg className="absolute inset-0 w-full h-full -rotate-90" style={{ pointerEvents: 'none' }}>
                 <circle cx="112" cy="112" r="110" fill="none" stroke="var(--border-primary)" strokeWidth="3" />
                 <circle
                   cx="112" cy="112" r="110" fill="none"
@@ -1160,110 +1159,85 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
                 />
               </svg>
 
-              {countdown === null ? (
-                // Введення часу
-                <div className="flex flex-col items-center gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="flex flex-col items-center">
-                      <span className="text-[10px] uppercase mb-1" style={{ color: 'var(--text-muted)' }}>хв</span>
-                      <input
-                        inputMode="numeric"
-                        className="w-14 text-4xl font-light text-center rounded-lg focus:outline-none focus:ring-1 bg-transparent"
-                        style={{ color: 'var(--text-primary)', border: '1px solid var(--border-primary)', caretColor: 'var(--accent)' }}
-                        value={targetMinutes}
-                        onChange={e => setTargetMinutes(e.target.value.replace(/[^0-9]/g, '').slice(0, 2))}
-                        placeholder="3"
-                      />
+              {/* Контент поверх SVG (z-10 щоб бути клікабельним) */}
+              <div className="relative z-10 flex flex-col items-center">
+                {countdown === null ? (
+                  // ─── Введення часу ───
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <div className="flex flex-col items-center">
+                        <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>хв</span>
+                        <input
+                          inputMode="numeric"
+                          className="w-12 text-3xl font-light text-center rounded-lg focus:outline-none bg-transparent"
+                          style={{ color: 'var(--text-primary)', border: '1px solid var(--border-primary)', caretColor: 'var(--accent)' }}
+                          value={targetMinutes}
+                          onChange={e => setTargetMinutes(e.target.value.replace(/[^0-9]/g, '').slice(0, 2))}
+                          placeholder="3"
+                        />
+                      </div>
+                      <span className="text-2xl font-light" style={{ color: 'var(--text-muted)' }}>:</span>
+                      <div className="flex flex-col items-center">
+                        <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>сек</span>
+                        <input
+                          inputMode="numeric"
+                          className="w-12 text-3xl font-light text-center rounded-lg focus:outline-none bg-transparent"
+                          style={{ color: 'var(--text-primary)', border: '1px solid var(--border-primary)', caretColor: 'var(--accent)' }}
+                          value={targetSeconds}
+                          onChange={e => setTargetSeconds(e.target.value.replace(/[^0-9]/g, '').slice(0, 2))}
+                          placeholder="00"
+                        />
+                      </div>
                     </div>
-                    <span className="text-3xl font-light mb-0" style={{ color: 'var(--text-muted)' }}>:</span>
-                    <div className="flex flex-col items-center">
-                      <span className="text-[10px] uppercase mb-1" style={{ color: 'var(--text-muted)' }}>сек</span>
-                      <input
-                        inputMode="numeric"
-                        className="w-14 text-4xl font-light text-center rounded-lg focus:outline-none focus:ring-1 bg-transparent"
-                        style={{ color: 'var(--text-primary)', border: '1px solid var(--border-primary)', caretColor: 'var(--accent)' }}
-                        value={targetSeconds}
-                        onChange={e => setTargetSeconds(e.target.value.replace(/[^0-9]/g, '').slice(0, 2))}
-                        placeholder="00"
-                      />
+                    {/* Швидкі пресети */}
+                    <div className="flex gap-1.5">
+                      {[['1:00', 60], ['2:00', 120], ['3:00', 180], ['5:00', 300]].map(([label, s]) => (
+                        <button
+                          key={String(label)}
+                          type="button"
+                          onClick={() => { tap(); setTargetMinutes(String(Math.floor(Number(s) / 60))); setTargetSeconds('00'); }}
+                          className="px-1.5 py-0.5 rounded text-[10px]"
+                          style={{ background: 'var(--bg-primary)', color: 'var(--text-secondary)', border: '1px solid var(--border-primary)' }}
+                        >{label}</button>
+                      ))}
                     </div>
                   </div>
-                  {/* Швидкі пресети */}
-                  <div className="flex gap-2 mt-1">
-                    {[['1:00', 60], ['2:00', 120], ['3:00', 180], ['5:00', 300]].map(([label, s]) => (
-                      <button
-                        key={label}
-                        onClick={() => { tap(); setTargetMinutes(String(Math.floor(Number(s) / 60))); setTargetSeconds('00'); }}
-                        className="px-2 py-1 rounded-lg text-xs"
-                        style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)', border: '1px solid var(--border-primary)' }}
-                      >{label}</button>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                // Показ відліку
-                <div className="flex flex-col items-center">
-                  <div
-                    className="text-6xl font-light tabular-nums"
-                    style={{ color: countdownDone ? '#ef4444' : 'var(--text-primary)' }}
-                  >
-                    {formatTime(countdown)}
-                  </div>
-                  {countdownDone && (
-                    <div className="text-sm mt-1 animate-pulse font-medium" style={{ color: '#ef4444' }}>
-                      Час вийшов! 🍵
+                ) : (
+                  // ─── Показ відліку ───
+                  <div className="flex flex-col items-center">
+                    <div className="text-5xl font-light tabular-nums" style={{ color: countdownDone ? '#ef4444' : 'var(--text-primary)' }}>
+                      {formatTime(countdown)}
                     </div>
-                  )}
-                </div>
-              )}
+                    {countdownDone && (
+                      <div className="text-xs mt-1 animate-pulse font-medium" style={{ color: '#ef4444' }}>Час вийшов! 🍵</div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Кнопки таймера */}
-            <div className="flex items-center gap-4 mb-2">
-              {/* Скинути */}
+            <div className="flex items-center gap-4">
               <button
                 onClick={resetCountdown}
-                className="w-14 h-14 rounded-full flex items-center justify-center active:scale-90 transition-transform"
+                className="w-12 h-12 rounded-full flex items-center justify-center active:scale-90 transition-transform"
                 style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}
-              ><RotateCcw size={20} /></button>
+              ><RotateCcw size={18} /></button>
 
-              {/* Старт / +1хв */}
               {countdownDone ? (
-                <button
-                  onClick={extendCountdown}
-                  className="h-16 px-8 rounded-full font-bold shadow-2xl active:scale-95 transition-all text-white animate-pulse"
-                  style={{ background: 'var(--accent)' }}
-                >
-                  +1 хв
-                </button>
+                <button onClick={extendCountdown} className="h-14 px-7 rounded-full font-bold shadow-2xl active:scale-95 transition-all text-white animate-pulse" style={{ background: 'var(--accent)' }}>+1 хв</button>
               ) : countdown === null ? (
-                <button
-                  onClick={startCountdown}
-                  className="w-24 h-24 rounded-full flex items-center justify-center shadow-2xl active:scale-95 transition-all text-white"
-                  style={{ background: 'var(--accent)' }}
-                >
-                  <Play size={36} fill="currentColor" className="ml-1" />
+                <button onClick={startCountdown} className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl active:scale-95 transition-all text-white" style={{ background: 'var(--accent)' }}>
+                  <Play size={30} fill="currentColor" className="ml-1" />
                 </button>
               ) : (
-                <button disabled className="w-24 h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--accent-border)', color: 'var(--accent)' }}>
-                  <div className="text-2xl font-mono">{countdown}</div>
+                <button disabled className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--accent-border)', color: 'var(--accent)' }}>
+                  <div className="text-xl font-mono">{countdown}</div>
                 </button>
               )}
 
-              {/* Наступний пролив */}
-              <button
-                onClick={() => { tap(); resetCountdown(); setSteepCount(s => s + 1); }}
-                className="w-14 h-14 rounded-full flex items-center justify-center font-bold active:scale-90 transition-transform"
-                style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)' }}
-              >#{steepCount}</button>
+              <button onClick={() => { tap(); resetCountdown(); setSteepCount(s => s + 1); }} className="w-12 h-12 rounded-full flex items-center justify-center font-bold active:scale-90 transition-transform" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)' }}>#{steepCount}</button>
             </div>
-
-            {/* Підказка */}
-            {countdown === null && (
-              <p className="text-xs text-center mt-1" style={{ color: 'var(--text-muted)' }}>
-                Вкажи час заварювання і натисни ▶
-              </p>
-            )}
           </>
         )}
       </div>
