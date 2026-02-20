@@ -1039,7 +1039,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
   const countdownProgress = countdown !== null && totalTarget > 0
     ? 1 - countdown / totalTarget
     : 0;
-  const circumference = 2 * Math.PI * 110;
+  const circumference = 2 * Math.PI * 106;
 
   // ─── Підсумок ─────────────────────────────────────────────
   if (showSummary) {
@@ -1146,10 +1146,10 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
           <>
             {/* Кільце прогресу — SVG pointer-none, контент z-10 */}
             <div className="relative w-48 h-48 flex items-center justify-center mb-4">
-              <svg className="absolute inset-0 w-full h-full -rotate-90" style={{ pointerEvents: 'none' }}>
-                <circle cx="112" cy="112" r="110" fill="none" stroke="var(--border-primary)" strokeWidth="3" />
+              <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 224 224" style={{ pointerEvents: 'none' }}>
+                <circle cx="112" cy="112" r="106" fill="none" stroke="var(--border-primary)" strokeWidth="3" />
                 <circle
-                  cx="112" cy="112" r="110" fill="none"
+                  cx="112" cy="112" r="106" fill="none"
                   stroke={countdownDone ? '#ef4444' : 'var(--accent)'}
                   strokeWidth="3"
                   strokeLinecap="round"
