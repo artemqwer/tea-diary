@@ -1,6 +1,7 @@
 import type { NextAuthConfig } from 'next-auth';
 
 export const authConfig = {
+  trustHost: true,
   pages: {
     signIn: '/login', // Вказуємо, де наша сторінка входу
   },
@@ -16,7 +17,7 @@ export const authConfig = {
       } else if (isOnLogin) {
         if (isLoggedIn) {
           // Якщо вже залогінений і лізе на логін -> на головну
-          return Response.redirect(new URL('/', nextUrl)); 
+          return Response.redirect(new URL('/', nextUrl));
         }
         return true;
       }
