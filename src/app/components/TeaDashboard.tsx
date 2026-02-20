@@ -57,7 +57,11 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }: any) 
 // --- МОДАЛКА ВИБОРУ АВАТАРА ---
 const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
   const [seed, setSeed] = useState(Math.random().toString(36).substring(7));
-  const [style, setStyle] = useState('notionists'); // notionists, adventurer, fun-emoji
+  const [style, setStyle] = useState('notionists');
+  const [tab, setTab] = useState<'generate' | 'upload'>('generate');
+  const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const styles = [
     { id: 'notionists', name: 'Sketch' },
@@ -68,8 +72,58 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
 
   const avatarUrl = `https://api.dicebear.com/9.x/${style}/svg?seed=${seed}&backgroundColor=transparent`;
 
+  const compressAvatar = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = document.createElement('img');
+      const reader = new FileReader();
+      reader.onload = (e) => { img.src = e.target?.result as string; };
+      reader.onerror = reject;
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const SIZE = 256;
+        canvas.width = SIZE;
+        canvas.height = SIZE;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return reject('No context');
+
+        // Crop to square from center
+        const min = Math.min(img.width, img.height);
+        const sx = (img.width - min) / 2;
+        const sy = (img.height - min) / 2;
+
+        ctx.drawImage(img, sx, sy, min, min, 0, 0, SIZE, SIZE);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        resolve(dataUrl);
+      };
+
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const dataUrl = await compressAvatar(file);
+      setUploadPreview(dataUrl);
+    } catch (err) {
+      console.error('Failed to process image:', err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSave = () => {
-    onSelect(avatarUrl);
+    if (tab === 'upload' && uploadPreview) {
+      onSelect(uploadPreview);
+    } else {
+      onSelect(avatarUrl);
+    }
     onClose();
   };
 
@@ -80,47 +134,127 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
       <div className="bg-stone-900 border border-stone-800 w-full max-w-sm rounded-2xl p-6 shadow-2xl relative">
         <button onClick={onClose} className="absolute right-4 top-4 text-stone-500 hover:text-stone-300"><X size={20} /></button>
 
-        <h3 className="text-xl font-serif text-stone-100 mb-6 text-center">Виберіть образ</h3>
+        <h3 className="text-xl font-serif text-stone-100 mb-4 text-center">Виберіть образ</h3>
 
-        <div className="flex justify-center mb-8">
-          <div className="w-32 h-32 rounded-full bg-stone-800 border-4 border-amber-600/20 overflow-hidden relative group">
-            <img src={avatarUrl} alt="Avatar Preview" className="w-full h-full object-cover" />
-            <button
-              onClick={() => setSeed(Math.random().toString(36).substring(7))}
-              className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <RefreshCw className="text-white" size={24} />
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-4 gap-2 mb-6">
-          {styles.map(s => (
-            <button
-              key={s.id}
-              onClick={() => setStyle(s.id)}
-              className={`py-2 px-1 rounded-lg text-xs font-medium transition-colors ${style === s.id ? 'bg-amber-600 text-white' : 'bg-stone-800 text-stone-400 hover:bg-stone-700'}`}
-            >
-              {s.name}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex gap-3">
+        {/* Tabs */}
+        <div className="flex bg-stone-800/50 rounded-xl p-1 mb-6">
           <button
-            onClick={() => setSeed(Math.random().toString(36).substring(7))}
-            className="flex-1 py-3 rounded-xl bg-stone-800 text-stone-300 font-medium hover:bg-stone-700 transition-colors flex items-center justify-center gap-2"
+            onClick={() => setTab('generate')}
+            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${tab === 'generate' ? 'bg-amber-600 text-white' : 'text-stone-400 hover:text-stone-300'}`}
           >
-            <RefreshCw size={16} />
-            Випадковий
+            🎲 Генерувати
           </button>
           <button
-            onClick={handleSave}
-            className="flex-1 py-3 rounded-xl bg-amber-600 text-white font-medium hover:bg-amber-500 transition-colors"
+            onClick={() => setTab('upload')}
+            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${tab === 'upload' ? 'bg-amber-600 text-white' : 'text-stone-400 hover:text-stone-300'}`}
           >
-            Зберегти
+            📷 Своє фото
           </button>
         </div>
+
+        {tab === 'generate' && (
+          <>
+            <div className="flex justify-center mb-8">
+              <div className="w-32 h-32 rounded-full bg-stone-800 border-4 border-amber-600/20 overflow-hidden relative group">
+                <img src={avatarUrl} alt="Avatar Preview" className="w-full h-full object-cover" />
+                <button
+                  onClick={() => setSeed(Math.random().toString(36).substring(7))}
+                  className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <RefreshCw className="text-white" size={24} />
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 gap-2 mb-6">
+              {styles.map(s => (
+                <button
+                  key={s.id}
+                  onClick={() => setStyle(s.id)}
+                  className={`py-2 px-1 rounded-lg text-xs font-medium transition-colors ${style === s.id ? 'bg-amber-600 text-white' : 'bg-stone-800 text-stone-400 hover:bg-stone-700'}`}
+                >
+                  {s.name}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setSeed(Math.random().toString(36).substring(7))}
+                className="flex-1 py-3 rounded-xl bg-stone-800 text-stone-300 font-medium hover:bg-stone-700 transition-colors flex items-center justify-center gap-2"
+              >
+                <RefreshCw size={16} />
+                Випадковий
+              </button>
+              <button
+                onClick={handleSave}
+                className="flex-1 py-3 rounded-xl bg-amber-600 text-white font-medium hover:bg-amber-500 transition-colors"
+              >
+                Зберегти
+              </button>
+            </div>
+          </>
+        )}
+
+        {tab === 'upload' && (
+          <>
+            <div className="flex justify-center mb-6">
+              <div
+                className="w-32 h-32 rounded-full bg-stone-800 border-4 border-amber-600/20 overflow-hidden relative group cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {uploadPreview ? (
+                  <img src={uploadPreview} alt="Custom Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-stone-500">
+                    {uploading ? (
+                      <RefreshCw className="animate-spin" size={24} />
+                    ) : (
+                      <>
+                        <Camera size={28} className="mb-1" />
+                        <span className="text-[10px]">Натисніть</span>
+                      </>
+                    )}
+                  </div>
+                )}
+                {uploadPreview && (
+                  <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Camera className="text-white" size={24} />
+                  </div>
+                )}
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileSelect}
+              />
+            </div>
+
+            <p className="text-stone-500 text-xs text-center mb-6">
+              Фото буде обрізане до квадрата і стиснуте автоматично
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="flex-1 py-3 rounded-xl bg-stone-800 text-stone-300 font-medium hover:bg-stone-700 transition-colors flex items-center justify-center gap-2"
+              >
+                <Upload size={16} />
+                {uploadPreview ? 'Змінити' : 'Обрати'}
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={!uploadPreview}
+                className={`flex-1 py-3 rounded-xl font-medium transition-colors ${uploadPreview ? 'bg-amber-600 text-white hover:bg-amber-500' : 'bg-stone-800 text-stone-600 cursor-not-allowed'}`}
+              >
+                Зберегти
+              </button>
+            </div>
+          </>
+        )}
+
       </div>
     </div>
   );
