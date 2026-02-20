@@ -56,6 +56,7 @@ type Session = {
 // --- ДОПОМІЖНІ КОМПОНЕНТИ ---
 
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }: any) => {
+  const { t } = useLocale();
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-200">
@@ -66,8 +67,8 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }: any) 
         </div>
         <p className="text-sm mb-6 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{message}</p>
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 py-3 rounded-xl font-medium transition-colors" style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>Скасувати</button>
-          <button onClick={onConfirm} className="flex-1 py-3 rounded-xl font-medium transition-colors" style={{ background: 'var(--danger-bg)', color: 'var(--danger)', border: '1px solid var(--danger-border)' }}>Підтвердити</button>
+          <button onClick={onClose} className="flex-1 py-3 rounded-xl font-medium transition-colors" style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>{t.confirm.cancel}</button>
+          <button onClick={onConfirm} className="flex-1 py-3 rounded-xl font-medium transition-colors" style={{ background: 'var(--danger-bg)', color: 'var(--danger)', border: '1px solid var(--danger-border)' }}>{t.confirm.confirm}</button>
         </div>
       </div>
     </div>
@@ -76,6 +77,7 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }: any) 
 
 // --- МОДАЛКА ВИБОРУ АВАТАРА ---
 const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
+  const { locale } = useLocale();
   const [seed, setSeed] = useState(Math.random().toString(36).substring(7));
   const [style, setStyle] = useState('notionists');
   const [tab, setTab] = useState<'generate' | 'upload'>('generate');
@@ -154,7 +156,7 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
       <div className="w-full max-w-sm rounded-2xl p-6 shadow-2xl relative" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
         <button onClick={onClose} className="absolute right-4 top-4" style={{ color: 'var(--text-muted)' }}><X size={20} /></button>
 
-        <h3 className="text-xl font-serif mb-4 text-center" style={{ color: 'var(--text-primary)' }}>Виберіть образ</h3>
+        <h3 className="text-xl font-serif mb-4 text-center" style={{ color: 'var(--text-primary)' }}>{locale === 'uk' ? 'Виберіть образ' : 'Choose avatar'}</h3>
 
         {/* Tabs */}
         <div className="flex rounded-xl p-1 mb-6" style={{ background: 'var(--bg-tertiary)' }}>
@@ -163,14 +165,14 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
             className="flex-1 py-2 rounded-lg text-sm font-medium transition-colors"
             style={tab === 'generate' ? { background: 'var(--accent)', color: 'white' } : { color: 'var(--text-secondary)' }}
           >
-            🎲 Генерувати
+            🎲 {locale === 'uk' ? 'Генерувати' : 'Generate'}
           </button>
           <button
             onClick={() => setTab('upload')}
             className="flex-1 py-2 rounded-lg text-sm font-medium transition-colors"
             style={tab === 'upload' ? { background: 'var(--accent)', color: 'white' } : { color: 'var(--text-secondary)' }}
           >
-            📷 Своє фото
+            📷 {locale === 'uk' ? 'Своє фото' : 'Upload photo'}
           </button>
         </div>
 
@@ -208,14 +210,14 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
                 style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
               >
                 <RefreshCw size={16} />
-                Випадковий
+                {locale === 'uk' ? 'Випадковий' : 'Random'}
               </button>
               <button
                 onClick={handleSave}
                 className="flex-1 py-3 rounded-xl text-white font-medium transition-colors"
                 style={{ background: 'var(--accent)' }}
               >
-                Зберегти
+                {locale === 'uk' ? 'Зберегти' : 'Save'}
               </button>
             </div>
           </>
@@ -259,7 +261,7 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
             </div>
 
             <p className="text-xs text-center mb-6" style={{ color: 'var(--text-muted)' }}>
-              Фото буде обрізане до квадрата і стиснуте автоматично
+              {locale === 'uk' ? 'Фото буде обрізане до квадрата і стиснуте автоматично' : 'Photo will be cropped to square and compressed automatically'}
             </p>
 
             <div className="flex gap-3">
@@ -269,7 +271,7 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
                 style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
               >
                 <Upload size={16} />
-                {uploadPreview ? 'Змінити' : 'Обрати'}
+                {uploadPreview ? (locale === 'uk' ? 'Змінити' : 'Change') : (locale === 'uk' ? 'Обрати' : 'Choose')}
               </button>
               <button
                 onClick={handleSave}
@@ -277,7 +279,7 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
                 className="flex-1 py-3 rounded-xl font-medium transition-colors"
                 style={uploadPreview ? { background: 'var(--accent)', color: 'white' } : { background: 'var(--bg-tertiary)', color: 'var(--text-muted)', cursor: 'not-allowed' }}
               >
-                Зберегти
+                {locale === 'uk' ? 'Зберегти' : 'Save'}
               </button>
             </div>
           </>
@@ -429,24 +431,6 @@ const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
           </div>
         </div>
 
-        {/* Language switcher */}
-        <div className="pt-4 mt-2" style={{ borderTop: '1px solid var(--border-primary)' }}>
-          <div className="flex items-center justify-between p-3 rounded-xl" style={{ background: 'var(--bg-tertiary)' }}>
-            <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{t.profile.language}</div>
-            <div className="flex gap-1 rounded-xl p-1" style={{ background: 'var(--bg-secondary)' }}>
-              {(['uk', 'en'] as const).map(l => (
-                <button
-                  key={l}
-                  onClick={() => { tap(); setLocale(l); }}
-                  className="px-3 py-1 rounded-lg text-sm font-medium transition-all"
-                  style={locale === l ? { background: 'var(--accent)', color: 'white' } : { color: 'var(--text-secondary)' }}
-                >
-                  {l === 'uk' ? '🇺🇦 UA' : '🇬🇧 EN'}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -455,6 +439,8 @@ const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
 // --- ПРОФІЛЬНЕ МЕНЮ ---
 const UserProfileMenu = ({ user, onUserUpdate }: { user: any, onUserUpdate: (newUser: any) => void }) => {
   const router = useRouter();
+  const { locale, setLocale, t } = useLocale();
+  const { tap } = useVibration();
   const [isOpen, setIsOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
@@ -524,7 +510,7 @@ const UserProfileMenu = ({ user, onUserUpdate }: { user: any, onUserUpdate: (new
 
         {isOpen && (
           <div className="absolute right-0 top-12 w-72 rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-top-2 duration-200 z-50" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-            {/* Інфо про користувача */}
+            {/* User info */}
             <div className="p-4" style={{ borderBottom: '1px solid var(--border-primary)' }}>
               <div className="flex items-center gap-4 mb-2">
                 <div className="relative group cursor-pointer" onClick={() => setShowAvatarModal(true)} style={{ borderRadius: '9999px' }}>
@@ -534,7 +520,7 @@ const UserProfileMenu = ({ user, onUserUpdate }: { user: any, onUserUpdate: (new
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-medium truncate text-lg" style={{ color: 'var(--text-primary)' }}>{user?.name || 'Користувач'}</h4>
+                  <h4 className="font-medium truncate text-lg" style={{ color: 'var(--text-primary)' }}>{user?.name || (locale === 'uk' ? 'Користувач' : 'User')}</h4>
                   <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>{user?.email || 'email@example.com'}</p>
                 </div>
               </div>
@@ -543,47 +529,62 @@ const UserProfileMenu = ({ user, onUserUpdate }: { user: any, onUserUpdate: (new
                 className="w-full mt-2 py-1.5 text-xs font-medium rounded-lg transition-colors"
                 style={{ color: 'var(--text-secondary)', background: 'var(--bg-tertiary)' }}
               >
-                Змінити аватар
+                {t.profile.change_avatar}
               </button>
             </div>
 
-            {/* Меню опцій */}
+            {/* Menu options */}
             <div className="p-2 space-y-1">
               <button
-                onClick={() => {
-                  setIsOpen(false);
-                  setShowThemeModal(true);
-                }}
+                onClick={() => { setIsOpen(false); setShowThemeModal(true); }}
                 className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-colors group"
                 style={{ color: 'var(--text-secondary)' }}
                 onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
               >
                 <Palette size={18} className="group-hover:rotate-12 transition-transform" />
-                <span className="font-medium">Тема додатку</span>
+                <span className="font-medium">{t.profile.theme_settings}</span>
               </button>
+
+              {/* Language switcher inline */}
+              <div className="flex items-center gap-3 px-3 py-2">
+                <Settings size={18} style={{ color: 'var(--text-secondary)' }} />
+                <span className="font-medium text-sm flex-1" style={{ color: 'var(--text-secondary)' }}>{t.profile.language}</span>
+                <div className="flex gap-1 rounded-lg p-0.5" style={{ background: 'var(--bg-tertiary)' }}>
+                  {(['uk', 'en'] as const).map(l => (
+                    <button
+                      key={l}
+                      onClick={() => { tap(); setLocale(l); }}
+                      className="px-2.5 py-1 rounded-md text-xs font-bold transition-all"
+                      style={locale === l
+                        ? { background: 'var(--accent)', color: 'white' }
+                        : { color: 'var(--text-muted)' }}
+                    >
+                      {l === 'uk' ? '🇺🇦' : '🇬🇧'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <button
-                onClick={() => {
-                  setIsOpen(false);
-                  setShowLogoutModal(true);
-                }}
+                onClick={() => { setIsOpen(false); setShowLogoutModal(true); }}
                 className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-red-400 hover:bg-red-900/10 transition-colors group"
               >
                 <LogOut size={18} className="group-hover:translate-x-0.5 transition-transform" />
-                <span className="font-medium">Вийти з акаунту</span>
+                <span className="font-medium">{t.profile.logout}</span>
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* Модалка підтвердження виходу */}
+      {/* Logout confirmation modal */}
       <ConfirmationModal
         isOpen={showLogoutModal}
         onClose={() => setShowLogoutModal(false)}
         onConfirm={handleLogout}
-        title="Вийти з акаунту?"
-        message="Ви впевнені, що хочете вийти? Ваші дані будуть збережені."
+        title={locale === 'uk' ? 'Вийти з акаунту?' : 'Sign out?'}
+        message={locale === 'uk' ? 'Ви впевнені, що хочете вийти? Ваші дані будуть збережені.' : 'Are you sure you want to sign out? Your data will be saved.'}
       />
 
       {/* Модалка вибору аватара */}
@@ -604,9 +605,10 @@ const UserProfileMenu = ({ user, onUserUpdate }: { user: any, onUserUpdate: (new
 
 // --- МОДАЛЬНЕ ВІКНО ДОДАВАННЯ ЧАЮ (НОВЕ) ---
 const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
+  const { t, locale } = useLocale();
   const [formData, setFormData] = useState({
     name: '',
-    type: 'Пуер',
+    type: locale === 'uk' ? 'Пуер' : 'Puer',
     year: String(new Date().getFullYear()),
     origin: '',
     total: '357',
@@ -745,7 +747,7 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-4">
       <div className="w-full max-w-md rounded-2xl p-6 shadow-2xl animate-in slide-in-from-bottom-10 sm:zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-serif" style={{ color: 'var(--text-primary)' }}>Додати в колекцію</h2>
+          <h2 className="text-xl font-serif" style={{ color: 'var(--text-primary)' }}>{t.addTea.title}</h2>
           <button onClick={onClose} style={{ color: 'var(--text-muted)' }}><X size={24} /></button>
         </div>
 
@@ -755,14 +757,14 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
             <label className="w-full rounded-xl p-4 flex items-center justify-center gap-2 cursor-pointer transition-colors group border border-dashed" style={{ background: 'var(--bg-tertiary)', borderColor: 'var(--border-primary)' }}>
               <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
               <Sparkles className="group-hover:scale-110 transition-transform" size={20} style={{ color: 'var(--accent)' }} />
-              <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Розпізнати по фото (AI)</span>
+              <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>{t.addTea.ai_analyze}</span>
             </label>
           )}
 
           {aiLoading && (
             <div className="w-full rounded-xl p-4 flex items-center justify-center gap-3" style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)' }}>
               <RefreshCw className="animate-spin" size={20} style={{ color: 'var(--accent)' }} />
-              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Аналізую чай... 🍵</span>
+              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{t.addTea.ai_analyzing} 🍵</span>
             </div>
           )}
 
@@ -779,37 +781,37 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
               <div className="flex justify-between items-start mb-3">
                 <div className="flex items-center gap-2" style={{ color: 'var(--accent)' }}>
                   <Sparkles size={16} />
-                  <span className="text-xs font-bold uppercase tracking-widest">AI знайшов це</span>
+                  <span className="text-xs font-bold uppercase tracking-widest">{locale === 'uk' ? 'AI знайшов це' : 'AI found this'}</span>
                 </div>
                 <button onClick={() => setAiData(null)} style={{ color: 'var(--text-muted)' }}><X size={16} /></button>
               </div>
 
               <div className="space-y-1 mb-4 text-sm" style={{ color: 'var(--text-primary)' }}>
-                <p><span style={{ color: 'var(--text-muted)' }}>Назва:</span> {aiData.name}</p>
-                <p><span style={{ color: 'var(--text-muted)' }}>Тип:</span> {aiData.type}</p>
-                <p><span style={{ color: 'var(--text-muted)' }}>Рік:</span> {aiData.year}</p>
-                <p><span style={{ color: 'var(--text-muted)' }}>Регіон:</span> {aiData.origin}</p>
+                <p><span style={{ color: 'var(--text-muted)' }}>{locale === 'uk' ? 'Назва' : 'Name'}:</span> {aiData.name}</p>
+                <p><span style={{ color: 'var(--text-muted)' }}>{locale === 'uk' ? 'Тип' : 'Type'}:</span> {aiData.type}</p>
+                <p><span style={{ color: 'var(--text-muted)' }}>{locale === 'uk' ? 'Рік' : 'Year'}:</span> {aiData.year}</p>
+                <p><span style={{ color: 'var(--text-muted)' }}>{locale === 'uk' ? 'Регіон' : 'Region'}:</span> {aiData.origin}</p>
               </div>
 
               <div className="flex gap-2">
                 <button onClick={applyAiData} className="flex-1 text-white text-xs font-bold py-2 rounded-lg transition-colors" style={{ background: 'var(--accent)' }}>
-                  Заповнити форму
+                  {locale === 'uk' ? 'Заповнити форму' : 'Fill form'}
                 </button>
               </div>
-              <p className="text-[10px] mt-2 text-center" style={{ color: 'var(--text-muted)' }}>ШІ може помилятись. Перевірте дані.</p>
+              <p className="text-[10px] mt-2 text-center" style={{ color: 'var(--text-muted)' }}>{locale === 'uk' ? 'ШІ може помилятись. Перевірте дані.' : 'AI may be inaccurate. Please verify the data.'}</p>
             </div>
           )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className={labelClass} style={labelStyle}>Назва чаю</label>
+            <label className={labelClass} style={labelStyle}>{t.addTea.name_label}</label>
             <input
               required
               autoFocus
               className={inputClass}
               style={inputStyle}
-              placeholder="Напр. Lao Ban Zhang"
+              placeholder={t.addTea.name_placeholder}
               value={formData.name}
               onChange={e => setFormData({ ...formData, name: e.target.value })}
             />
@@ -817,7 +819,7 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelClass} style={labelStyle}>Тип</label>
+              <label className={labelClass} style={labelStyle}>{t.addTea.type_label}</label>
               <select
                 className={`${inputClass} appearance-none`}
                 style={inputStyle}
@@ -832,24 +834,24 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
                   }
                 }}
               >
-                <option value="Пуер">Пуер (Puer)</option>
-                <option value="Шу Пуер">Шу Пуер (Shu)</option>
-                <option value="Шен Пуер">Шен Пуер (Sheng)</option>
-                <option value="Улун">Улун (Oolong)</option>
-                <option value="Червоний">Червоний (Red)</option>
-                <option value="Зелений">Зелений (Green)</option>
-                <option value="Білий">Білий (White)</option>
-                <option value="Жовтий">Жовтий (Yellow)</option>
-                <option value="Чорний">Чорний (Black)</option>
-                <option value="GABA">GABA (Габа)</option>
-                <option value="Хей Ча">Хей Ча (Dark)</option>
-                <option value="__custom__">Інший...</option>
+                <option value="Пуер">{t.addTea.tea_types.puer}</option>
+                <option value="Шу Пуер">{t.addTea.tea_types.shu}</option>
+                <option value="Шен Пуер">{t.addTea.tea_types.sheng}</option>
+                <option value="Улун">{t.addTea.tea_types.oolong}</option>
+                <option value="Червоний">{t.addTea.tea_types.red}</option>
+                <option value="Зелений">{t.addTea.tea_types.green}</option>
+                <option value="Білий">{t.addTea.tea_types.white}</option>
+                <option value="Жовтий">{t.addTea.tea_types.yellow}</option>
+                <option value="Чорний">{t.addTea.tea_types.black}</option>
+                <option value="GABA">{t.addTea.tea_types.gaba}</option>
+                <option value="Хей Ча">{t.addTea.tea_types.dark}</option>
+                <option value="__custom__">{t.addTea.tea_types.other}</option>
               </select>
               {isCustomType && (
                 <input
                   className={`${inputClass} mt-2`}
                   style={inputStyle}
-                  placeholder="Впишіть свій тип чаю"
+                  placeholder={t.addTea.custom_type_placeholder}
                   autoFocus
                   value={customType}
                   onChange={e => setCustomType(e.target.value)}
@@ -857,7 +859,7 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
               )}
             </div>
             <div>
-              <label className={labelClass} style={labelStyle}>Рік</label>
+              <label className={labelClass} style={labelStyle}>{t.addTea.year_label}</label>
               <input
                 inputMode="numeric"
                 className={inputClass}
@@ -870,17 +872,17 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelClass} style={labelStyle}>Регіон</label>
+              <label className={labelClass} style={labelStyle}>{t.addTea.region_label}</label>
               <input
                 className={inputClass}
                 style={inputStyle}
-                placeholder="Напр. Menghai"
+                placeholder={t.addTea.region_placeholder}
                 value={formData.origin}
                 onChange={e => setFormData({ ...formData, origin: e.target.value })}
               />
             </div>
             <div>
-              <label className={labelClass} style={labelStyle}>Вага (г)</label>
+              <label className={labelClass} style={labelStyle}>{t.addTea.weight_label}</label>
               <input
                 inputMode="numeric"
                 className={inputClass}
@@ -892,9 +894,9 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
             </div>
           </div>
 
-          {/* Колір вкладки */}
+          {/* Color badge */}
           <div>
-            <label className={labelClass} style={labelStyle}>Колір вкладки типу</label>
+            <label className={labelClass} style={labelStyle}>{t.addTea.color_label}</label>
             <div className="flex flex-wrap gap-2 mt-1">
               {colorPresets.map(c => (
                 <button
@@ -923,16 +925,16 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
             {/* Preview */}
             {badgeColor && (
               <div className="mt-2 flex items-center gap-2 text-xs" style={{ color: 'var(--text-muted)' }}>
-                <span>Попередній вигляд:</span>
+                <span>{t.addTea.color_preview}</span>
                 <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-medium" style={{ background: badgeColor + '22', color: badgeColor, border: `1px solid ${badgeColor}55` }}>
-                  {isCustomType ? (customType || 'Тип') : formData.type}
+                  {isCustomType ? (customType || (locale === 'uk' ? 'Тип' : 'Type')) : formData.type}
                 </span>
               </div>
             )}
           </div>
 
           <button type="submit" className="w-full text-white font-medium py-4 rounded-xl mt-4 shadow-lg active:scale-95 transition-all" style={{ background: 'var(--accent)' }}>
-            Зберегти чай
+            {t.addTea.submit}
           </button>
         </form>
       </div>
