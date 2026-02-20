@@ -4,12 +4,14 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { addTeaAction, deleteTeaAction, addSessionAction, updateUserAvatarAction, analyzeTeaImageAction } from './../actions';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
+import { useTheme } from './ThemeProvider';
 
 import {
   Play, Pause, RotateCcw, Plus, Home, History,
   Droplets, Clock, Leaf, ChevronRight, Search,
   X, Pencil, Save, Trash2, AlertTriangle, Star,
-  User, LogOut, Settings, Camera, RefreshCw, Calendar, Sparkles, Upload
+  User, LogOut, Settings, Camera, RefreshCw, Calendar, Sparkles, Upload,
+  Palette, Sun, Moon, Paintbrush
 } from 'lucide-react';
 
 // --- ТИПИ ---
@@ -260,12 +262,122 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
   );
 };
 
+// --- МОДАЛКА НАЛАШТУВАНЬ ТЕМИ ---
+const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+  const { theme, setTheme, customColors, setCustomColors } = useTheme();
+  const [localColors, setLocalColors] = useState(customColors);
+
+  useEffect(() => {
+    setLocalColors(customColors);
+  }, [customColors, isOpen]);
+
+  if (!isOpen) return null;
+
+  const presets = [
+    { id: 'dark' as const, name: 'Темна', icon: <Moon size={20} />, desc: 'Класична темна тема' },
+    { id: 'light' as const, name: 'Світла', icon: <Sun size={20} />, desc: 'Легка світла тема' },
+    { id: 'custom' as const, name: 'Кастомна', icon: <Paintbrush size={20} />, desc: 'Свої кольори' },
+  ];
+
+  const colorFields = [
+    { key: 'accent' as const, label: 'Акцент', desc: 'Кнопки, активні елементи' },
+    { key: 'bgPrimary' as const, label: 'Фон основний', desc: 'Головний фон' },
+    { key: 'bgSecondary' as const, label: 'Фон вторинний', desc: 'Картки, панелі' },
+    { key: 'bgTertiary' as const, label: 'Фон третинний', desc: 'Ховер, бордери' },
+    { key: 'textPrimary' as const, label: 'Текст основний', desc: 'Заголовки' },
+    { key: 'textSecondary' as const, label: 'Текст вторинний', desc: 'Підписи' },
+    { key: 'borderPrimary' as const, label: 'Бордер', desc: 'Лінії розділу' },
+  ];
+
+  const handleColorChange = (key: keyof typeof localColors, value: string) => {
+    const next = { ...localColors, [key]: value };
+    setLocalColors(next);
+    if (theme === 'custom') {
+      setCustomColors(next);
+    }
+  };
+
+  const handlePresetSelect = (preset: 'dark' | 'light' | 'custom') => {
+    setTheme(preset);
+    if (preset === 'custom') {
+      setCustomColors(localColors);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+      <div className="w-full max-w-sm rounded-2xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-primary)', border: '1px solid var(--border-primary)' }}>
+        <button onClick={onClose} className="absolute right-4 top-4" style={{ color: 'var(--text-muted)' }}><X size={20} /></button>
+
+        <div className="flex items-center gap-2 mb-6">
+          <Palette size={22} style={{ color: 'var(--accent)' }} />
+          <h3 className="text-xl font-serif" style={{ color: 'var(--text-primary)' }}>Тема додатку</h3>
+        </div>
+
+        {/* Theme presets */}
+        <div className="space-y-2 mb-6">
+          {presets.map(p => (
+            <button
+              key={p.id}
+              onClick={() => handlePresetSelect(p.id)}
+              className="w-full flex items-center gap-3 p-3 rounded-xl transition-all"
+              style={{
+                background: theme === p.id ? 'var(--accent-subtle)' : 'transparent',
+                border: theme === p.id ? '1px solid var(--accent-border)' : '1px solid transparent',
+              }}
+            >
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: theme === p.id ? 'var(--accent)' : 'var(--bg-tertiary)', color: theme === p.id ? 'white' : 'var(--text-muted)' }}>
+                {p.icon}
+              </div>
+              <div className="text-left flex-1">
+                <div className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>{p.name}</div>
+                <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{p.desc}</div>
+              </div>
+              {theme === p.id && (
+                <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'var(--accent)' }}>
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Custom colors section */}
+        {theme === 'custom' && (
+          <div className="space-y-3 pt-4" style={{ borderTop: '1px solid var(--border-primary)' }}>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--text-muted)' }}>Кольори</p>
+            {colorFields.map(field => (
+              <div key={field.key} className="flex items-center gap-3">
+                <label className="relative w-10 h-10 rounded-lg overflow-hidden cursor-pointer shrink-0" style={{ border: '2px solid var(--border-primary)' }}>
+                  <input
+                    type="color"
+                    value={localColors[field.key]}
+                    onChange={e => handleColorChange(field.key, e.target.value)}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                  <div className="w-full h-full" style={{ background: localColors[field.key] }} />
+                </label>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{field.label}</div>
+                  <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{field.desc}</div>
+                </div>
+                <code className="text-[10px] font-mono" style={{ color: 'var(--text-muted)' }}>{localColors[field.key]}</code>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // --- ПРОФІЛЬНЕ МЕНЮ ---
 const UserProfileMenu = ({ user, onUserUpdate }: { user: any, onUserUpdate: (newUser: any) => void }) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [showThemeModal, setShowThemeModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Закриття меню при кліку поза ним
@@ -353,7 +465,20 @@ const UserProfileMenu = ({ user, onUserUpdate }: { user: any, onUserUpdate: (new
             </div>
 
             {/* Меню опцій */}
-            <div className="p-2">
+            <div className="p-2 space-y-1">
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  setShowThemeModal(true);
+                }}
+                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-colors group"
+                style={{ color: 'var(--text-secondary)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+              >
+                <Palette size={18} className="group-hover:rotate-12 transition-transform" />
+                <span className="font-medium">Тема додатку</span>
+              </button>
               <button
                 onClick={() => {
                   setIsOpen(false);
@@ -383,6 +508,12 @@ const UserProfileMenu = ({ user, onUserUpdate }: { user: any, onUserUpdate: (new
         isOpen={showAvatarModal}
         onClose={() => setShowAvatarModal(false)}
         onSelect={handleAvatarUpdate}
+      />
+
+      {/* Модалка налаштувань теми */}
+      <ThemeSettingsModal
+        isOpen={showThemeModal}
+        onClose={() => setShowThemeModal(false)}
       />
     </>
   );
@@ -920,7 +1051,7 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
   };
 
   return (
-    <div className="min-h-dvh bg-stone-950 text-stone-100 selection:bg-amber-500/30">
+    <div className="min-h-dvh selection:bg-amber-500/30" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
 
       {activeTea && <ActiveSessionView tea={activeTea} onClose={() => setActiveTea(null)} />}
 
@@ -936,12 +1067,12 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
       />
 
       <div className="pb-28">
-        <header className="px-6 pt-12 pb-6 flex justify-between items-end bg-gradient-to-b from-stone-900/40 to-transparent">
+        <header className="px-6 pt-12 pb-6 flex justify-between items-end" style={{ background: 'linear-gradient(to bottom, var(--bg-secondary), transparent)' }}>
           <div>
-            <p className="text-stone-500 text-sm mb-1">Сьогодні {new Date().toLocaleDateString('uk-UA', { weekday: 'long' })}</p>
+            <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>Сьогодні {new Date().toLocaleDateString('uk-UA', { weekday: 'long' })}</p>
             <div className="flex items-baseline gap-2">
-              <h1 className="text-2xl font-serif text-stone-100">Час Чаю</h1>
-              <span className="text-[10px] text-stone-600 font-mono">v1.2</span>
+              <h1 className="text-2xl font-serif" style={{ color: 'var(--text-primary)' }}>Час Чаю</h1>
+              <span className="text-[10px] font-mono" style={{ color: 'var(--text-muted)' }}>v1.3</span>
             </div>
           </div>
           <UserProfileMenu user={currentUser} onUserUpdate={setCurrentUser} />
@@ -950,43 +1081,43 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
         <main className="px-6">
           {activeTab === 'home' && (
             <div className="space-y-8 animate-in fade-in duration-500">
-              <button onClick={() => setActiveTab('stash')} className="w-full bg-amber-600 hover:bg-amber-500 p-6 rounded-2xl flex items-center justify-between shadow-xl shadow-amber-900/10 group transition-all">
+              <button onClick={() => setActiveTab('stash')} className="w-full p-6 rounded-2xl flex items-center justify-between shadow-xl group transition-all" style={{ background: 'var(--accent)' }}>
                 <div className="text-left">
-                  <h2 className="text-xl font-medium mb-1">Нова сесія</h2>
-                  <p className="text-amber-100/70 text-sm">Почати медитацію з чаєм</p>
+                  <h2 className="text-xl font-medium text-white mb-1">Нова сесія</h2>
+                  <p className="text-white/70 text-sm">Почати медитацію з чаєм</p>
                 </div>
-                <div className="bg-white/20 p-3 rounded-full group-hover:scale-110 transition-transform"><Play fill="currentColor" size={24} /></div>
+                <div className="bg-white/20 p-3 rounded-full group-hover:scale-110 transition-transform text-white"><Play fill="currentColor" size={24} /></div>
               </button>
 
               <ContributionGraph sessions={initialSessions} />
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-stone-900/50 border border-stone-800/50 p-4 rounded-2xl">
-                  <Droplets className="text-amber-600/60 mb-2" size={20} />
-                  <div className="text-2xl font-medium">{stats.liters}<span className="text-sm text-stone-600 ml-1">л</span></div>
-                  <p className="text-[10px] text-stone-500 uppercase tracking-widest">Випито за місяць</p>
+                <div className="p-4 rounded-2xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+                  <Droplets className="mb-2" size={20} style={{ color: 'var(--accent)', opacity: 0.6 }} />
+                  <div className="text-2xl font-medium">{stats.liters}<span className="text-sm ml-1" style={{ color: 'var(--text-muted)' }}>л</span></div>
+                  <p className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Випито за місяць</p>
                 </div>
-                <div className="bg-stone-900/50 border border-stone-800/50 p-4 rounded-2xl">
-                  <Clock className="text-amber-600/60 mb-2" size={20} />
-                  <div className="text-2xl font-medium">{stats.hours}<span className="text-sm text-stone-600 ml-1">год</span></div>
-                  <p className="text-[10px] text-stone-500 uppercase tracking-widest">Час медитації</p>
+                <div className="p-4 rounded-2xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+                  <Clock className="mb-2" size={20} style={{ color: 'var(--accent)', opacity: 0.6 }} />
+                  <div className="text-2xl font-medium">{stats.hours}<span className="text-sm ml-1" style={{ color: 'var(--text-muted)' }}>год</span></div>
+                  <p className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Час медитації</p>
                 </div>
               </div>
 
               <section>
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-stone-400 font-serif">Нещодавні</h3>
-                  <button onClick={() => setActiveTab('history')} className="text-amber-600 text-xs font-bold uppercase tracking-widest">Всі</button>
+                  <h3 className="font-serif" style={{ color: 'var(--text-secondary)' }}>Нещодавні</h3>
+                  <button onClick={() => setActiveTab('history')} className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--accent)' }}>Всі</button>
                 </div>
                 <div className="space-y-3">
                   {initialSessions.slice(0, 3).map(s => (
-                    <div key={s.id} className="bg-stone-900/80 border border-stone-800 p-4 rounded-xl flex justify-between items-center">
+                    <div key={s.id} className="p-4 rounded-xl flex justify-between items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
                       <div>
-                        <h4 className="font-medium text-stone-200">{s.tea?.name || 'Видалений чай'}</h4>
-                        <p className="text-[10px] text-stone-500 uppercase mt-0.5">{new Date(s.date).toLocaleDateString()} • {s.steeps} проливів</p>
+                        <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>{s.tea?.name || 'Видалений чай'}</h4>
+                        <p className="text-[10px] uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>{new Date(s.date).toLocaleDateString()} • {s.steeps} проливів</p>
                       </div>
                       <div className="flex gap-0.5">
-                        {[...Array(5)].map((_, i) => <div key={i} className={`w-1.5 h-1.5 rounded-full ${i < s.rating ? 'bg-amber-500' : 'bg-stone-700'}`} />)}
+                        {[...Array(5)].map((_, i) => <div key={i} className="w-1.5 h-1.5 rounded-full" style={{ background: i < s.rating ? 'var(--accent)' : 'var(--border-primary)' }} />)}
                       </div>
                     </div>
                   ))}
@@ -998,35 +1129,41 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
           {activeTab === 'stash' && (
             <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-300">
               <div className="relative">
-                <input className="w-full bg-stone-900 border border-stone-800 text-stone-200 p-3 pl-10 rounded-xl focus:outline-none focus:border-amber-600/50 transition-colors" placeholder="Знайти чай у сховищі..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-                <Search className="absolute left-3 top-3.5 text-stone-500" size={18} />
+                <input
+                  className="w-full p-3 pl-10 rounded-xl focus:outline-none transition-colors"
+                  style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)' }}
+                  placeholder="Знайти чай у сховищі..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Search className="absolute left-3 top-3.5" size={18} style={{ color: 'var(--text-muted)' }} />
               </div>
 
               <div className="space-y-3">
                 {filteredTeas.map(tea => {
                   const progress = Math.round((tea.remaining / tea.total) * 100);
                   return (
-                    <div key={tea.id} onClick={() => setActiveTea(tea)} className="bg-stone-900 border border-stone-800 rounded-2xl p-4 active:scale-98 transition-transform cursor-pointer group">
+                    <div key={tea.id} onClick={() => setActiveTea(tea)} className="rounded-2xl p-4 active:scale-98 transition-transform cursor-pointer group" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
                       <div className="flex justify-between items-start mb-2">
-                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border border-stone-700 bg-stone-800/50 text-stone-400">{tea.type}</span>
-                        <button onClick={(e) => confirmDelete(e, tea)} className="text-stone-600 hover:text-red-400 transition-colors p-1"><Trash2 size={18} /></button>
+                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full" style={{ border: '1px solid var(--border-primary)', background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>{tea.type}</span>
+                        <button onClick={(e) => confirmDelete(e, tea)} className="p-1 transition-colors hover:text-red-400" style={{ color: 'var(--text-muted)' }}><Trash2 size={18} /></button>
                       </div>
                       <div className="flex justify-between items-end mb-3">
-                        <h3 className="text-stone-100 font-medium text-lg">{tea.name}</h3>
-                        <span className="text-stone-400 text-xs font-mono">{tea.remaining} / {tea.total}г</span>
+                        <h3 className="font-medium text-lg" style={{ color: 'var(--text-primary)' }}>{tea.name}</h3>
+                        <span className="text-xs font-mono" style={{ color: 'var(--text-secondary)' }}>{tea.remaining} / {tea.total}г</span>
                       </div>
-                      <div className="w-full bg-stone-800 h-1.5 rounded-full overflow-hidden">
-                        <div className="bg-amber-600/60 h-full rounded-full transition-all duration-1000" style={{ width: `${progress}%` }} />
+                      <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--bg-tertiary)' }}>
+                        <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${progress}%`, background: 'var(--accent)', opacity: 0.6 }} />
                       </div>
                     </div>
                   );
                 })}
               </div>
 
-              {/* Кнопка тепер відкриває модалку */}
               <button
                 onClick={() => setAddModalOpen(true)}
-                className="w-full py-4 rounded-xl border border-dashed border-stone-800 text-stone-500 hover:text-amber-500 hover:border-amber-500/50 transition-all flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-xl border border-dashed transition-all flex items-center justify-center gap-2"
+                style={{ borderColor: 'var(--border-primary)', color: 'var(--text-muted)' }}
               >
                 <Plus size={20} /> Додати в колекцію
               </button>
@@ -1037,14 +1174,14 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
             <div className="space-y-4 animate-in fade-in duration-500">
               <h2 className="text-xl font-serif mb-6">Історія заварювань</h2>
               {initialSessions.map(session => (
-                <div key={session.id} className="bg-stone-900 border border-stone-800 p-4 rounded-xl">
+                <div key={session.id} className="p-4 rounded-xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-medium">{session.tea?.name || 'Видалений чай'}</h4>
                     <div className="flex gap-0.5">
-                      {[...Array(5)].map((_, i) => <div key={i} className={`w-1 h-1 rounded-full ${i < session.rating ? 'bg-amber-500' : 'bg-stone-700'}`} />)}
+                      {[...Array(5)].map((_, i) => <div key={i} className="w-1 h-1 rounded-full" style={{ background: i < session.rating ? 'var(--accent)' : 'var(--border-primary)' }} />)}
                     </div>
                   </div>
-                  <div className="flex justify-between text-[10px] text-stone-500 uppercase tracking-widest">
+                  <div className="flex justify-between text-[10px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
                     <span>{new Date(session.date).toLocaleDateString()}</span>
                     <span>{session.steeps} проливів • {Math.floor(session.duration / 60)}хв</span>
                   </div>
@@ -1055,10 +1192,10 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
         </main>
       </div>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-stone-900/90 backdrop-blur-lg border-t border-stone-800 pb-safe pt-2 px-8 flex justify-between items-center z-50">
-        <button onClick={() => setActiveTab('home')} className={`flex flex-col items-center gap-1 p-2 transition-colors ${activeTab === 'home' ? 'text-amber-500' : 'text-stone-500'}`}><Home size={24} /><span className="text-[10px] font-medium">Головна</span></button>
-        <button onClick={() => setActiveTab('stash')} className={`flex flex-col items-center gap-1 p-2 transition-colors ${activeTab === 'stash' ? 'text-amber-500' : 'text-stone-500'}`}><Leaf size={24} /><span className="text-[10px] font-medium">Сховище</span></button>
-        <button onClick={() => setActiveTab('history')} className={`flex flex-col items-center gap-1 p-2 transition-colors ${activeTab === 'history' ? 'text-amber-500' : 'text-stone-500'}`}><History size={24} /><span className="text-[10px] font-medium">Історія</span></button>
+      <nav className="fixed bottom-0 left-0 right-0 backdrop-blur-lg pb-safe pt-2 px-8 flex justify-between items-center z-50" style={{ background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-primary)', opacity: 0.95 }}>
+        <button onClick={() => setActiveTab('home')} className="flex flex-col items-center gap-1 p-2 transition-colors" style={{ color: activeTab === 'home' ? 'var(--accent)' : 'var(--text-muted)' }}><Home size={24} /><span className="text-[10px] font-medium">Головна</span></button>
+        <button onClick={() => setActiveTab('stash')} className="flex flex-col items-center gap-1 p-2 transition-colors" style={{ color: activeTab === 'stash' ? 'var(--accent)' : 'var(--text-muted)' }}><Leaf size={24} /><span className="text-[10px] font-medium">Сховище</span></button>
+        <button onClick={() => setActiveTab('history')} className="flex flex-col items-center gap-1 p-2 transition-colors" style={{ color: activeTab === 'history' ? 'var(--accent)' : 'var(--text-muted)' }}><History size={24} /><span className="text-[10px] font-medium">Історія</span></button>
       </nav>
     </div>
   );
