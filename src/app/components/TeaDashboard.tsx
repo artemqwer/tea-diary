@@ -41,15 +41,15 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }: any) 
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-200">
-      <div className="bg-stone-900 border border-stone-800 w-full max-w-sm rounded-2xl p-6 shadow-2xl">
-        <div className="flex items-center gap-3 text-amber-500 mb-4">
+      <div className="w-full max-w-sm rounded-2xl p-6 shadow-2xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+        <div className="flex items-center gap-3 mb-4" style={{ color: 'var(--accent)' }}>
           <AlertTriangle size={24} />
-          <h3 className="text-lg font-serif font-bold text-stone-100">{title}</h3>
+          <h3 className="text-lg font-serif font-bold" style={{ color: 'var(--text-primary)' }}>{title}</h3>
         </div>
-        <p className="text-stone-400 text-sm mb-6 leading-relaxed">{message}</p>
+        <p className="text-sm mb-6 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{message}</p>
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 py-3 rounded-xl bg-stone-800 text-stone-300 font-medium transition-colors hover:bg-stone-700">Скасувати</button>
-          <button onClick={onConfirm} className="flex-1 py-3 rounded-xl bg-red-900/30 text-red-400 border border-red-900/50 font-medium transition-colors hover:bg-red-900/40">Підтвердити</button>
+          <button onClick={onClose} className="flex-1 py-3 rounded-xl font-medium transition-colors" style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>Скасувати</button>
+          <button onClick={onConfirm} className="flex-1 py-3 rounded-xl font-medium transition-colors" style={{ background: 'var(--danger-bg)', color: 'var(--danger)', border: '1px solid var(--danger-border)' }}>Підтвердити</button>
         </div>
       </div>
     </div>
@@ -133,22 +133,24 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-200">
-      <div className="bg-stone-900 border border-stone-800 w-full max-w-sm rounded-2xl p-6 shadow-2xl relative">
-        <button onClick={onClose} className="absolute right-4 top-4 text-stone-500 hover:text-stone-300"><X size={20} /></button>
+      <div className="w-full max-w-sm rounded-2xl p-6 shadow-2xl relative" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+        <button onClick={onClose} className="absolute right-4 top-4" style={{ color: 'var(--text-muted)' }}><X size={20} /></button>
 
-        <h3 className="text-xl font-serif text-stone-100 mb-4 text-center">Виберіть образ</h3>
+        <h3 className="text-xl font-serif mb-4 text-center" style={{ color: 'var(--text-primary)' }}>Виберіть образ</h3>
 
         {/* Tabs */}
-        <div className="flex bg-stone-800/50 rounded-xl p-1 mb-6">
+        <div className="flex rounded-xl p-1 mb-6" style={{ background: 'var(--bg-tertiary)' }}>
           <button
             onClick={() => setTab('generate')}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${tab === 'generate' ? 'bg-amber-600 text-white' : 'text-stone-400 hover:text-stone-300'}`}
+            className="flex-1 py-2 rounded-lg text-sm font-medium transition-colors"
+            style={tab === 'generate' ? { background: 'var(--accent)', color: 'white' } : { color: 'var(--text-secondary)' }}
           >
             🎲 Генерувати
           </button>
           <button
             onClick={() => setTab('upload')}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${tab === 'upload' ? 'bg-amber-600 text-white' : 'text-stone-400 hover:text-stone-300'}`}
+            className="flex-1 py-2 rounded-lg text-sm font-medium transition-colors"
+            style={tab === 'upload' ? { background: 'var(--accent)', color: 'white' } : { color: 'var(--text-secondary)' }}
           >
             📷 Своє фото
           </button>
@@ -157,7 +159,7 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
         {tab === 'generate' && (
           <>
             <div className="flex justify-center mb-8">
-              <div className="w-32 h-32 rounded-full bg-stone-800 border-4 border-amber-600/20 overflow-hidden relative group">
+              <div className="w-32 h-32 rounded-full border-4 overflow-hidden relative group" style={{ background: 'var(--bg-tertiary)', borderColor: 'var(--accent-border)' }}>
                 <img src={avatarUrl} alt="Avatar Preview" className="w-full h-full object-cover" />
                 <button
                   onClick={() => setSeed(Math.random().toString(36).substring(7))}
@@ -173,7 +175,8 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
                 <button
                   key={s.id}
                   onClick={() => setStyle(s.id)}
-                  className={`py-2 px-1 rounded-lg text-xs font-medium transition-colors ${style === s.id ? 'bg-amber-600 text-white' : 'bg-stone-800 text-stone-400 hover:bg-stone-700'}`}
+                  className="py-2 px-1 rounded-lg text-xs font-medium transition-colors"
+                  style={style === s.id ? { background: 'var(--accent)', color: 'white' } : { background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
                 >
                   {s.name}
                 </button>
@@ -183,14 +186,16 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
             <div className="flex gap-3">
               <button
                 onClick={() => setSeed(Math.random().toString(36).substring(7))}
-                className="flex-1 py-3 rounded-xl bg-stone-800 text-stone-300 font-medium hover:bg-stone-700 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+                style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
               >
                 <RefreshCw size={16} />
                 Випадковий
               </button>
               <button
                 onClick={handleSave}
-                className="flex-1 py-3 rounded-xl bg-amber-600 text-white font-medium hover:bg-amber-500 transition-colors"
+                className="flex-1 py-3 rounded-xl text-white font-medium transition-colors"
+                style={{ background: 'var(--accent)' }}
               >
                 Зберегти
               </button>
@@ -202,13 +207,14 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
           <>
             <div className="flex justify-center mb-6">
               <div
-                className="w-32 h-32 rounded-full bg-stone-800 border-4 border-amber-600/20 overflow-hidden relative group cursor-pointer"
+                className="w-32 h-32 rounded-full border-4 overflow-hidden relative group cursor-pointer"
+                style={{ background: 'var(--bg-tertiary)', borderColor: 'var(--accent-border)' }}
                 onClick={() => fileInputRef.current?.click()}
               >
                 {uploadPreview ? (
                   <img src={uploadPreview} alt="Custom Avatar" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-stone-500">
+                  <div className="w-full h-full flex flex-col items-center justify-center" style={{ color: 'var(--text-muted)' }}>
                     {uploading ? (
                       <RefreshCw className="animate-spin" size={24} />
                     ) : (
@@ -234,14 +240,15 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
               />
             </div>
 
-            <p className="text-stone-500 text-xs text-center mb-6">
+            <p className="text-xs text-center mb-6" style={{ color: 'var(--text-muted)' }}>
               Фото буде обрізане до квадрата і стиснуте автоматично
             </p>
 
             <div className="flex gap-3">
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex-1 py-3 rounded-xl bg-stone-800 text-stone-300 font-medium hover:bg-stone-700 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+                style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
               >
                 <Upload size={16} />
                 {uploadPreview ? 'Змінити' : 'Обрати'}
@@ -249,7 +256,8 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
               <button
                 onClick={handleSave}
                 disabled={!uploadPreview}
-                className={`flex-1 py-3 rounded-xl font-medium transition-colors ${uploadPreview ? 'bg-amber-600 text-white hover:bg-amber-500' : 'bg-stone-800 text-stone-600 cursor-not-allowed'}`}
+                className="flex-1 py-3 rounded-xl font-medium transition-colors"
+                style={uploadPreview ? { background: 'var(--accent)', color: 'white' } : { background: 'var(--bg-tertiary)', color: 'var(--text-muted)', cursor: 'not-allowed' }}
               >
                 Зберегти
               </button>
@@ -425,7 +433,7 @@ const UserProfileMenu = ({ user, onUserUpdate }: { user: any, onUserUpdate: (new
       return <img src={user.image} alt={user.name} className={`${className} object-cover`} />;
     }
     return (
-      <div className={`${className} bg-gradient-to-br from-amber-600 to-amber-700 flex items-center justify-center text-white font-bold ${size === 'lg' ? 'text-xl' : 'text-xs'}`}>
+      <div className={`${className} flex items-center justify-center text-white font-bold ${size === 'lg' ? 'text-xl' : 'text-xs'}`} style={{ background: 'linear-gradient(135deg, var(--accent), var(--accent-hover))' }}>
         {getInitials(user?.name)}
       </div>
     );
@@ -436,30 +444,32 @@ const UserProfileMenu = ({ user, onUserUpdate }: { user: any, onUserUpdate: (new
       <div ref={menuRef} className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="rounded-full border-2 border-stone-700 shadow-lg hover:shadow-xl hover:scale-105 transition-all active:scale-95 overflow-hidden"
+          className="rounded-full border-2 shadow-lg hover:shadow-xl hover:scale-105 transition-all active:scale-95 overflow-hidden"
+          style={{ borderColor: 'var(--border-primary)' }}
         >
           <Avatar className="w-10 h-10" />
         </button>
 
         {isOpen && (
-          <div className="absolute right-0 top-12 w-72 bg-stone-900 border border-stone-800 rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-top-2 duration-200 z-50">
+          <div className="absolute right-0 top-12 w-72 rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-top-2 duration-200 z-50" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
             {/* Інфо про користувача */}
-            <div className="p-4 border-b border-stone-800 bg-stone-900/50">
+            <div className="p-4" style={{ borderBottom: '1px solid var(--border-primary)' }}>
               <div className="flex items-center gap-4 mb-2">
-                <div className="relative group cursor-pointer" onClick={() => setShowAvatarModal(true)}>
-                  <Avatar className="w-16 h-16 rounded-full border-2 border-stone-700" size="lg" />
-                  <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="relative group cursor-pointer" onClick={() => setShowAvatarModal(true)} style={{ borderRadius: '9999px' }}>
+                  <Avatar className="w-16 h-16 rounded-full border-2 border-current" size="lg" />
+                  <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: 'var(--border-primary)' }}>
                     <Camera size={20} className="text-white" />
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-stone-100 truncate text-lg">{user?.name || 'Користувач'}</h4>
-                  <p className="text-xs text-stone-500 truncate">{user?.email || 'email@example.com'}</p>
+                  <h4 className="font-medium truncate text-lg" style={{ color: 'var(--text-primary)' }}>{user?.name || 'Користувач'}</h4>
+                  <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>{user?.email || 'email@example.com'}</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowAvatarModal(true)}
-                className="w-full mt-2 py-1.5 text-xs font-medium text-stone-400 bg-stone-800/50 rounded-lg hover:bg-stone-800 transition-colors"
+                className="w-full mt-2 py-1.5 text-xs font-medium rounded-lg transition-colors"
+                style={{ color: 'var(--text-secondary)', background: 'var(--bg-tertiary)' }}
               >
                 Змінити аватар
               </button>
@@ -641,31 +651,33 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
     onClose();
   };
 
-  const inputClass = "w-full bg-stone-950 border border-stone-800 rounded-xl p-3 text-stone-200 focus:border-amber-600/50 focus:outline-none transition-colors";
-  const labelClass = "text-[10px] text-stone-500 uppercase tracking-widest block mb-1.5 ml-1";
+  const inputClass = "w-full rounded-xl p-3 focus:outline-none transition-colors";
+  const inputStyle = { background: 'var(--bg-primary)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)' };
+  const labelClass = "text-[10px] uppercase tracking-widest block mb-1.5 ml-1";
+  const labelStyle = { color: 'var(--text-muted)' };
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-4">
-      <div className="bg-stone-900 border border-stone-800 w-full max-w-md rounded-2xl p-6 shadow-2xl animate-in slide-in-from-bottom-10 sm:zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+      <div className="w-full max-w-md rounded-2xl p-6 shadow-2xl animate-in slide-in-from-bottom-10 sm:zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-serif text-stone-100">Додати в колекцію</h2>
-          <button onClick={onClose} className="text-stone-500 hover:text-stone-300"><X size={24} /></button>
+          <h2 className="text-xl font-serif" style={{ color: 'var(--text-primary)' }}>Додати в колекцію</h2>
+          <button onClick={onClose} style={{ color: 'var(--text-muted)' }}><X size={24} /></button>
         </div>
 
         {/* AI SCAN SECTION */}
         <div className="mb-6">
           {!aiLoading && !aiData && (
-            <label className="w-full bg-stone-800/50 hover:bg-stone-800 border border-stone-700 border-dashed rounded-xl p-4 flex items-center justify-center gap-2 cursor-pointer transition-colors group">
+            <label className="w-full rounded-xl p-4 flex items-center justify-center gap-2 cursor-pointer transition-colors group border border-dashed" style={{ background: 'var(--bg-tertiary)', borderColor: 'var(--border-primary)' }}>
               <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-              <Sparkles className="text-amber-500 group-hover:scale-110 transition-transform" size={20} />
-              <span className="text-stone-400 text-sm font-medium group-hover:text-stone-300">Розпізнати по фото (AI)</span>
+              <Sparkles className="group-hover:scale-110 transition-transform" size={20} style={{ color: 'var(--accent)' }} />
+              <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Розпізнати по фото (AI)</span>
             </label>
           )}
 
           {aiLoading && (
-            <div className="w-full bg-stone-800/50 border border-stone-700 rounded-xl p-4 flex items-center justify-center gap-3">
-              <RefreshCw className="animate-spin text-amber-500" size={20} />
-              <span className="text-stone-400 text-sm">Аналізую чай... 🍵</span>
+            <div className="w-full rounded-xl p-4 flex items-center justify-center gap-3" style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)' }}>
+              <RefreshCw className="animate-spin" size={20} style={{ color: 'var(--accent)' }} />
+              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Аналізую чай... 🍵</span>
             </div>
           )}
 
@@ -678,39 +690,40 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
           )}
 
           {aiData && (
-            <div className="bg-amber-900/10 border border-amber-500/20 rounded-xl p-4 animate-in fade-in zoom-in-95">
+            <div className="rounded-xl p-4 animate-in fade-in zoom-in-95" style={{ background: 'var(--accent-subtle)', border: '1px solid var(--accent-border)' }}>
               <div className="flex justify-between items-start mb-3">
-                <div className="flex items-center gap-2 text-amber-500">
+                <div className="flex items-center gap-2" style={{ color: 'var(--accent)' }}>
                   <Sparkles size={16} />
                   <span className="text-xs font-bold uppercase tracking-widest">AI знайшов це</span>
                 </div>
-                <button onClick={() => setAiData(null)} className="text-stone-500 hover:text-stone-300"><X size={16} /></button>
+                <button onClick={() => setAiData(null)} style={{ color: 'var(--text-muted)' }}><X size={16} /></button>
               </div>
 
-              <div className="space-y-1 mb-4 text-sm text-stone-300">
-                <p><span className="text-stone-500">Назва:</span> {aiData.name}</p>
-                <p><span className="text-stone-500">Тип:</span> {aiData.type}</p>
-                <p><span className="text-stone-500">Рік:</span> {aiData.year}</p>
-                <p><span className="text-stone-500">Регіон:</span> {aiData.origin}</p>
+              <div className="space-y-1 mb-4 text-sm" style={{ color: 'var(--text-primary)' }}>
+                <p><span style={{ color: 'var(--text-muted)' }}>Назва:</span> {aiData.name}</p>
+                <p><span style={{ color: 'var(--text-muted)' }}>Тип:</span> {aiData.type}</p>
+                <p><span style={{ color: 'var(--text-muted)' }}>Рік:</span> {aiData.year}</p>
+                <p><span style={{ color: 'var(--text-muted)' }}>Регіон:</span> {aiData.origin}</p>
               </div>
 
               <div className="flex gap-2">
-                <button onClick={applyAiData} className="flex-1 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold py-2 rounded-lg transition-colors">
+                <button onClick={applyAiData} className="flex-1 text-white text-xs font-bold py-2 rounded-lg transition-colors" style={{ background: 'var(--accent)' }}>
                   Заповнити форму
                 </button>
               </div>
-              <p className="text-[10px] text-stone-600 mt-2 text-center">ШІ може помилятись. Перевірте дані.</p>
+              <p className="text-[10px] mt-2 text-center" style={{ color: 'var(--text-muted)' }}>ШІ може помилятись. Перевірте дані.</p>
             </div>
           )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className={labelClass}>Назва чаю</label>
+            <label className={labelClass} style={labelStyle}>Назва чаю</label>
             <input
               required
               autoFocus
               className={inputClass}
+              style={inputStyle}
               placeholder="Напр. Lao Ban Zhang"
               value={formData.name}
               onChange={e => setFormData({ ...formData, name: e.target.value })}
@@ -719,9 +732,10 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Тип</label>
+              <label className={labelClass} style={labelStyle}>Тип</label>
               <select
                 className={`${inputClass} appearance-none`}
+                style={inputStyle}
                 value={isCustomType ? '__custom__' : formData.type}
                 onChange={e => {
                   if (e.target.value === '__custom__') {
@@ -749,6 +763,7 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
               {isCustomType && (
                 <input
                   className={`${inputClass} mt-2`}
+                  style={inputStyle}
                   placeholder="Впишіть свій тип чаю"
                   autoFocus
                   value={customType}
@@ -757,10 +772,11 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
               )}
             </div>
             <div>
-              <label className={labelClass}>Рік</label>
+              <label className={labelClass} style={labelStyle}>Рік</label>
               <input
                 type="number"
                 className={inputClass}
+                style={inputStyle}
                 value={formData.year}
                 onChange={e => setFormData({ ...formData, year: Number(e.target.value) })}
               />
@@ -769,26 +785,28 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Регіон</label>
+              <label className={labelClass} style={labelStyle}>Регіон</label>
               <input
                 className={inputClass}
+                style={inputStyle}
                 placeholder="Напр. Menghai"
                 value={formData.origin}
                 onChange={e => setFormData({ ...formData, origin: e.target.value })}
               />
             </div>
             <div>
-              <label className={labelClass}>Вага (г)</label>
+              <label className={labelClass} style={labelStyle}>Вага (г)</label>
               <input
                 type="number"
                 className={inputClass}
+                style={inputStyle}
                 value={formData.total}
                 onChange={e => setFormData({ ...formData, total: Number(e.target.value) })}
               />
             </div>
           </div>
 
-          <button type="submit" className="w-full bg-amber-600 hover:bg-amber-500 text-white font-medium py-4 rounded-xl mt-4 shadow-lg shadow-amber-900/20 active:scale-95 transition-all">
+          <button type="submit" className="w-full text-white font-medium py-4 rounded-xl mt-4 shadow-lg active:scale-95 transition-all" style={{ background: 'var(--accent)' }}>
             Зберегти чай
           </button>
         </form>
@@ -854,20 +872,20 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
 
   if (showSummary) {
     return (
-      <div className="fixed inset-0 bg-stone-950 z-[80] flex flex-col items-center justify-center p-8 animate-in zoom-in-95 duration-200">
-        <h2 className="text-2xl font-serif text-stone-100 mb-2">Як вам чай?</h2>
-        <p className="text-stone-500 mb-6 text-center">{tea.name} ({tea.year})</p>
-        <p className="text-amber-600/60 font-mono text-sm mb-8">Час медитації: {formatTime(sessionDuration)}</p>
+      <div className="fixed inset-0 z-[80] flex flex-col items-center justify-center p-8 animate-in zoom-in-95 duration-200" style={{ background: 'var(--bg-primary)' }}>
+        <h2 className="text-2xl font-serif mb-2" style={{ color: 'var(--text-primary)' }}>Як вам чай?</h2>
+        <p className="mb-6 text-center" style={{ color: 'var(--text-muted)' }}>{tea.name} ({tea.year})</p>
+        <p className="font-mono text-sm mb-8" style={{ color: 'var(--accent)', opacity: 0.6 }}>Час медитації: {formatTime(sessionDuration)}</p>
 
         <div className="flex gap-2 mb-12">
           {[1, 2, 3, 4, 5].map((star) => (
             <button key={star} onClick={() => { setRating(star); vibrate(); }} className="p-1">
-              <Star size={36} fill={star <= rating ? "#d97706" : "none"} className={star <= rating ? "text-amber-600" : "text-stone-700"} />
+              <Star size={36} fill={star <= rating ? 'var(--accent)' : 'none'} style={{ color: star <= rating ? 'var(--accent)' : 'var(--border-primary)' }} />
             </button>
           ))}
         </div>
 
-        <button onClick={() => { vibrate(); handleFinish(); }} className="w-full max-w-xs bg-amber-600 py-4 rounded-xl font-bold shadow-lg shadow-amber-900/20 active:scale-95 transition-transform">
+        <button onClick={() => { vibrate(); handleFinish(); }} className="w-full max-w-xs py-4 rounded-xl font-bold shadow-lg active:scale-95 transition-transform text-white" style={{ background: 'var(--accent)' }}>
           Зберегти в історію
         </button>
       </div>
@@ -875,58 +893,57 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
   }
 
   return (
-    <div className="fixed inset-0 bg-stone-950 z-[70] flex flex-col h-dvh overflow-hidden">
+    <div className="fixed inset-0 z-[70] flex flex-col h-dvh overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
       <div className="flex justify-between items-center p-6 pt-12">
-        <button onClick={() => { vibrate(); onClose(); }} className="text-stone-400 flex items-center gap-1"><ChevronRight className="rotate-180" size={20} /> Назад</button>
+        <button onClick={() => { vibrate(); onClose(); }} className="flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}><ChevronRight className="rotate-180" size={20} /> Назад</button>
         <div className="flex flex-col items-center">
-          <span className="text-stone-500 text-xs tracking-widest uppercase">Gongfu Session</span>
-          <span className="text-amber-600/50 font-mono text-xs mt-0.5">{formatTime(sessionDuration)}</span>
+          <span className="text-xs tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>Gongfu Session</span>
+          <span className="font-mono text-xs mt-0.5" style={{ color: 'var(--accent)', opacity: 0.5 }}>{formatTime(sessionDuration)}</span>
         </div>
-        <button onClick={() => { vibrate(); setShowSummary(true); }} className="text-amber-500 font-bold">Фініш</button>
+        <button onClick={() => { vibrate(); setShowSummary(true); }} className="font-bold" style={{ color: 'var(--accent)' }}>Фініш</button>
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center px-6">
-        <h2 className="text-2xl text-stone-200 font-serif mb-8 text-center">{tea.name}</h2>
+        <h2 className="text-2xl font-serif mb-8 text-center" style={{ color: 'var(--text-primary)' }}>{tea.name}</h2>
 
         <div className="grid grid-cols-3 gap-3 w-full max-w-sm mb-12">
-          <div className="bg-stone-900/50 p-3 rounded-xl border border-stone-800 flex flex-col items-center">
-            <span className="text-[10px] text-stone-500 uppercase mb-1">Вода</span>
+          <div className="p-3 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+            <span className="text-[10px] uppercase mb-1" style={{ color: 'var(--text-muted)' }}>Вода</span>
             <div className="flex items-baseline gap-0.5 font-medium">
-              <input type="number" className="bg-transparent w-10 text-center focus:outline-none" value={temp} onChange={e => setTemp(Number(e.target.value))} />
-              <span className="text-xs text-stone-600">°C</span>
+              <input type="number" className="bg-transparent w-10 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={temp} onChange={e => setTemp(Number(e.target.value))} />
+              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>°C</span>
             </div>
           </div>
-          <div className="bg-stone-900/50 p-3 rounded-xl border border-stone-800 flex flex-col items-center">
-            <span className="text-[10px] text-stone-500 uppercase mb-1">Лист</span>
+          <div className="p-3 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+            <span className="text-[10px] uppercase mb-1" style={{ color: 'var(--text-muted)' }}>Лист</span>
             <div className="flex items-baseline gap-0.5 font-medium">
-              <input type="number" className="bg-transparent w-8 text-center focus:outline-none" value={grams} onChange={e => setGrams(Number(e.target.value))} />
-              <span className="text-xs text-stone-600">г</span>
+              <input type="number" className="bg-transparent w-8 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={grams} onChange={e => setGrams(Number(e.target.value))} />
+              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>г</span>
             </div>
           </div>
-          <div className="bg-stone-900/50 p-3 rounded-xl border border-stone-800 flex flex-col items-center">
-            <span className="text-[10px] text-stone-500 uppercase mb-1">Посуд</span>
+          <div className="p-3 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+            <span className="text-[10px] uppercase mb-1" style={{ color: 'var(--text-muted)' }}>Посуд</span>
             <div className="flex items-baseline gap-0.5 font-medium">
-              <input type="number" className="bg-transparent w-10 text-center focus:outline-none" value={volume} onChange={e => setVolume(Number(e.target.value))} />
-              <span className="text-xs text-stone-600">мл</span>
+              <input type="number" className="bg-transparent w-10 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={volume} onChange={e => setVolume(Number(e.target.value))} />
+              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>мл</span>
             </div>
           </div>
         </div>
 
         <div className="relative w-64 h-64 flex items-center justify-center mb-12">
-          <div className={`absolute inset-0 border-2 rounded-full transition-all duration-700 ${isActive ? 'border-amber-500/40 scale-110' : 'border-stone-800 scale-100'}`}></div>
-          <div className="text-7xl font-light text-stone-100 tabular-nums">
-            {seconds}<span className="text-2xl text-stone-600">s</span>
+          <div className="absolute inset-0 border-2 rounded-full transition-all duration-700" style={{ borderColor: isActive ? 'var(--accent)' : 'var(--border-primary)', transform: isActive ? 'scale(1.1)' : 'scale(1)', opacity: isActive ? 0.4 : 1 }}></div>
+          <div className="text-7xl font-light tabular-nums" style={{ color: 'var(--text-primary)' }}>
+            {seconds}<span className="text-2xl" style={{ color: 'var(--text-muted)' }}>s</span>
           </div>
-          {/* Маленький індикатор загального часу всередині кола (опціонально, але корисно) */}
-          <div className="absolute bottom-12 text-stone-600 text-xs tracking-wider uppercase opacity-50">Meditate</div>
+          <div className="absolute bottom-12 text-xs tracking-wider uppercase opacity-50" style={{ color: 'var(--text-muted)' }}>Meditate</div>
         </div>
 
         <div className="flex items-center gap-8 mb-8">
-          <button onClick={() => { vibrate(); setIsActive(false); setSeconds(0); }} className="w-14 h-14 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-400 active:scale-90 transition-transform"><RotateCcw size={20} /></button>
-          <button onClick={() => { vibrate(); setIsActive(!isActive); }} className={`w-24 h-24 rounded-full flex items-center justify-center shadow-2xl transition-all active:scale-95 ${isActive ? 'bg-stone-800 text-amber-500 border border-amber-500/20' : 'bg-amber-600 text-white'}`}>
+          <button onClick={() => { vibrate(); setIsActive(false); setSeconds(0); }} className="w-14 h-14 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}><RotateCcw size={20} /></button>
+          <button onClick={() => { vibrate(); setIsActive(!isActive); }} className="w-24 h-24 rounded-full flex items-center justify-center shadow-2xl transition-all active:scale-95" style={isActive ? { background: 'var(--bg-secondary)', color: 'var(--accent)', border: '1px solid var(--accent-border)' } : { background: 'var(--accent)', color: 'white' }}>
             {isActive ? <Pause size={36} fill="currentColor" /> : <Play size={36} fill="currentColor" className="ml-1" />}
           </button>
-          <button onClick={() => { vibrate(); setIsActive(false); setSeconds(0); setSteepCount(s => s + 1); }} className="w-14 h-14 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-200 font-bold active:scale-90 transition-transform">#{steepCount}</button>
+          <button onClick={() => { vibrate(); setIsActive(false); setSeconds(0); setSteepCount(s => s + 1); }} className="w-14 h-14 rounded-full flex items-center justify-center font-bold active:scale-90 transition-transform" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)' }}>#{steepCount}</button>
         </div>
       </div>
     </div>
@@ -982,13 +999,13 @@ const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
   }, [sessions]);
 
   return (
-    <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl shadow-sm">
+    <div className="p-5 rounded-2xl shadow-sm" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
       <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-2 text-stone-300">
+        <div className="flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
           <Calendar size={16} />
           <span className="text-xs font-bold uppercase tracking-widest">Рік Чаю</span>
         </div>
-        <span className="text-xs text-stone-500 font-mono">{totalSessions} сесій за рік</span>
+        <span className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>{totalSessions} сесій за рік</span>
       </div>
 
       <div ref={scrollRef} className="overflow-x-auto pb-2 scrollbar-none">
@@ -998,11 +1015,14 @@ const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
               {week.map((day, j) => (
                 <div
                   key={j}
-                  className={`w-2.5 h-2.5 rounded-sm transition-colors ${day.count === 0 ? 'bg-stone-800/40' :
-                    day.count === 1 ? 'bg-amber-900/60' :
-                      day.count <= 3 ? 'bg-amber-700/80' :
-                        'bg-amber-500'
-                    }`}
+                  className="w-2.5 h-2.5 rounded-sm transition-colors"
+                  style={{
+                    background: day.count === 0 ? 'var(--bg-tertiary)' :
+                      day.count === 1 ? 'var(--accent-subtle)' :
+                        day.count <= 3 ? 'var(--accent-border)' :
+                          'var(--accent)',
+                    opacity: day.count === 0 ? 0.4 : day.count === 1 ? 0.8 : 1
+                  }}
                   title={`${day.date.toLocaleDateString()}: ${day.count} sessions`}
                 />
               ))}
@@ -1010,12 +1030,12 @@ const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
           ))}
         </div>
       </div>
-      <div className="flex items-center gap-2 mt-3 text-[10px] text-stone-600 justify-end">
+      <div className="flex items-center gap-2 mt-3 text-[10px] justify-end" style={{ color: 'var(--text-muted)' }}>
         <span>Less</span>
-        <div className="w-2 h-2 rounded-sm bg-stone-800/40" />
-        <div className="w-2 h-2 rounded-sm bg-amber-900/60" />
-        <div className="w-2 h-2 rounded-sm bg-amber-700/80" />
-        <div className="w-2 h-2 rounded-sm bg-amber-500" />
+        <div className="w-2 h-2 rounded-sm" style={{ background: 'var(--bg-tertiary)', opacity: 0.4 }} />
+        <div className="w-2 h-2 rounded-sm" style={{ background: 'var(--accent)', opacity: 0.3 }} />
+        <div className="w-2 h-2 rounded-sm" style={{ background: 'var(--accent)', opacity: 0.6 }} />
+        <div className="w-2 h-2 rounded-sm" style={{ background: 'var(--accent)' }} />
         <span>More</span>
       </div>
     </div>
