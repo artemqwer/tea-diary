@@ -264,6 +264,9 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
     total: 357, // Стандартна вага бліна
   });
 
+  const [isCustomType, setIsCustomType] = useState(false);
+  const [customType, setCustomType] = useState('');
+
   const [aiLoading, setAiLoading] = useState(false);
   const [aiData, setAiData] = useState<any>(null);
   const [aiError, setAiError] = useState<string | null>(null);
@@ -360,9 +363,11 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
     e.preventDefault();
     if (!formData.name) return;
 
+    const finalType = isCustomType ? (customType || 'Інший') : formData.type;
+
     await addTeaAction({
       name: formData.name,
-      type: formData.type,
+      type: finalType,
       year: Number(formData.year),
       origin: formData.origin,
       total: Number(formData.total),
@@ -451,16 +456,39 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
               <label className={labelClass}>Тип</label>
               <select
                 className={`${inputClass} appearance-none`}
-                value={formData.type}
-                onChange={e => setFormData({ ...formData, type: e.target.value })}
+                value={isCustomType ? '__custom__' : formData.type}
+                onChange={e => {
+                  if (e.target.value === '__custom__') {
+                    setIsCustomType(true);
+                    setCustomType('');
+                  } else {
+                    setIsCustomType(false);
+                    setFormData({ ...formData, type: e.target.value });
+                  }
+                }}
               >
                 <option value="Пуер">Пуер (Puer)</option>
+                <option value="Шу Пуер">Шу Пуер (Shu)</option>
+                <option value="Шен Пуер">Шен Пуер (Sheng)</option>
                 <option value="Улун">Улун (Oolong)</option>
                 <option value="Червоний">Червоний (Red)</option>
                 <option value="Зелений">Зелений (Green)</option>
                 <option value="Білий">Білий (White)</option>
+                <option value="Жовтий">Жовтий (Yellow)</option>
+                <option value="Чорний">Чорний (Black)</option>
+                <option value="GABA">GABA (Габа)</option>
                 <option value="Хей Ча">Хей Ча (Dark)</option>
+                <option value="__custom__">Інший...</option>
               </select>
+              {isCustomType && (
+                <input
+                  className={`${inputClass} mt-2`}
+                  placeholder="Впишіть свій тип чаю"
+                  autoFocus
+                  value={customType}
+                  onChange={e => setCustomType(e.target.value)}
+                />
+              )}
             </div>
             <div>
               <label className={labelClass}>Рік</label>
