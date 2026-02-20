@@ -302,10 +302,13 @@ const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
   if (!isOpen) return null;
 
   const presets = [
-    { id: 'dark' as const, name: 'Темна', icon: <Moon size={20} />, desc: 'Класична темна тема' },
-    { id: 'light' as const, name: 'Світла', icon: <Sun size={20} />, desc: 'Легка світла тема' },
-    { id: 'green' as const, name: 'Зелений чай', icon: <Leaf size={20} />, desc: 'Лісова тема матчі' },
-    { id: 'custom' as const, name: 'Кастомна', icon: <Paintbrush size={20} />, desc: 'Свої кольори' },
+    { id: 'dark' as const, name: locale === 'uk' ? 'Темна' : 'Dark', accent: '#d97706', icon: <Moon size={14} /> },
+    { id: 'light' as const, name: locale === 'uk' ? 'Світла' : 'Light', accent: '#d97706', icon: <Sun size={14} /> },
+    { id: 'green' as const, name: locale === 'uk' ? 'Зелений чай' : 'Green', accent: '#66bb6a', icon: <Leaf size={14} /> },
+    { id: 'purple' as const, name: locale === 'uk' ? 'Фіолетовий' : 'Purple', accent: '#a855f7', icon: <span>✦</span> },
+    { id: 'red' as const, name: locale === 'uk' ? 'Червоний' : 'Red', accent: '#f87171', icon: <span>✦</span> },
+    { id: 'blue' as const, name: locale === 'uk' ? 'Синій' : 'Blue', accent: '#3b82f6', icon: <span>✦</span> },
+    { id: 'custom' as const, name: locale === 'uk' ? 'Кастомна' : 'Custom', accent: localColors.accent, icon: <Paintbrush size={14} /> },
   ];
 
   const colorFields = [
@@ -326,7 +329,7 @@ const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
     }
   };
 
-  const handlePresetSelect = (preset: 'dark' | 'light' | 'green' | 'custom') => {
+  const handlePresetSelect = (preset: 'dark' | 'light' | 'green' | 'purple' | 'red' | 'blue' | 'custom') => {
     tap();
     setTheme(preset);
     if (preset === 'custom') {
@@ -344,32 +347,36 @@ const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
           <h3 className="text-xl font-serif" style={{ color: 'var(--text-primary)' }}>Тема додатку</h3>
         </div>
 
-        {/* Theme presets */}
-        <div className="space-y-2 mb-6">
-          {presets.map(p => (
-            <button
-              key={p.id}
-              onClick={() => handlePresetSelect(p.id)}
-              className="w-full flex items-center gap-3 p-3 rounded-xl transition-all"
-              style={{
-                background: theme === p.id ? 'var(--accent-subtle)' : 'transparent',
-                border: theme === p.id ? '1px solid var(--accent-border)' : '1px solid transparent',
-              }}
-            >
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: theme === p.id ? 'var(--accent)' : 'var(--bg-tertiary)', color: theme === p.id ? 'white' : 'var(--text-muted)' }}>
-                {p.icon}
-              </div>
-              <div className="text-left flex-1">
-                <div className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>{p.name}</div>
-                <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{p.desc}</div>
-              </div>
-              {theme === p.id && (
-                <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'var(--accent)' }}>
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        {/* Theme presets grid */}
+        <div className="grid grid-cols-3 gap-2 mb-6">
+          {presets.map(p => {
+            const isActive = theme === p.id;
+            return (
+              <button
+                key={p.id}
+                onClick={() => handlePresetSelect(p.id)}
+                className="flex flex-col items-center gap-2 p-3 rounded-xl transition-all active:scale-95"
+                style={{
+                  background: isActive ? 'var(--accent-subtle)' : 'var(--bg-tertiary)',
+                  border: isActive ? '1px solid var(--accent-border)' : '1px solid transparent',
+                }}
+              >
+                {/* Color circle preview */}
+                <div
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-base shadow-md"
+                  style={{ background: p.accent + (p.id === 'light' ? '' : '33'), border: `2px solid ${p.accent}`, color: p.accent }}
+                >
+                  {p.icon}
                 </div>
-              )}
-            </button>
-          ))}
+                <span className="text-[10px] font-medium leading-tight text-center" style={{ color: isActive ? 'var(--accent)' : 'var(--text-secondary)' }}>
+                  {p.name}
+                </span>
+                {isActive && (
+                  <div className="absolute" style={{ display: 'none' }} />
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {/* Custom colors section */}

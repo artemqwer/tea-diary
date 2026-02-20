@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-type ThemeType = 'dark' | 'light' | 'green' | 'custom';
+type ThemeType = 'dark' | 'light' | 'green' | 'purple' | 'red' | 'blue' | 'custom';
 
 type CustomColors = {
     accent: string;
@@ -39,6 +39,8 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 export const useTheme = () => useContext(ThemeContext);
+
+const PRESET_THEMES: ThemeType[] = ['dark', 'light', 'green', 'purple', 'red', 'blue'];
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     const [theme, setThemeState] = useState<ThemeType>('dark');
@@ -83,10 +85,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
             const props = ['--bg-primary', '--bg-secondary', '--bg-tertiary', '--bg-card', '--bg-input', '--bg-hover', '--text-primary', '--text-secondary', '--text-muted', '--border-primary', '--border-secondary', '--accent', '--accent-hover', '--accent-subtle', '--accent-border'];
             props.forEach(p => root.style.removeProperty(p));
 
-            if (theme === 'light') {
-                root.setAttribute('data-theme', 'light');
-            } else if (theme === 'green') {
-                root.setAttribute('data-theme', 'green');
+            if (PRESET_THEMES.includes(theme) && theme !== 'dark') {
+                root.setAttribute('data-theme', theme);
             } else {
                 root.removeAttribute('data-theme');
             }

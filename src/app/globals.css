@@ -102,6 +102,102 @@
   --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
+/* Purple theme */
+[data-theme="purple"] {
+  --bg-primary: #0d0a1a;
+  --bg-secondary: #16102b;
+  --bg-tertiary: #231a3d;
+  --bg-card: #16102b;
+  --bg-input: #0d0a1a;
+  --bg-hover: #231a3d;
+  --bg-overlay: rgba(0, 0, 0, 0.8);
+
+  --text-primary: #ede9fe;
+  --text-secondary: #c4b5fd;
+  --text-muted: #7c5cbf;
+
+  --border-primary: #231a3d;
+  --border-secondary: #16102b;
+
+  --accent: #a855f7;
+  --accent-hover: #c084fc;
+  --accent-subtle: rgba(168, 85, 247, 0.12);
+  --accent-border: rgba(168, 85, 247, 0.28);
+
+  --danger: #ef4444;
+  --danger-bg: rgba(127, 29, 29, 0.1);
+  --danger-border: rgba(127, 29, 29, 0.3);
+
+  --success: #a855f7;
+  --success-bg: rgba(168, 85, 247, 0.1);
+
+  --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Red / Crimson theme */
+[data-theme="red"] {
+  --bg-primary: #1a0a0a;
+  --bg-secondary: #2b1010;
+  --bg-tertiary: #3d1818;
+  --bg-card: #2b1010;
+  --bg-input: #1a0a0a;
+  --bg-hover: #3d1818;
+  --bg-overlay: rgba(0, 0, 0, 0.8);
+
+  --text-primary: #ffe4e4;
+  --text-secondary: #fca5a5;
+  --text-muted: #b05555;
+
+  --border-primary: #3d1818;
+  --border-secondary: #2b1010;
+
+  --accent: #f87171;
+  --accent-hover: #fb923c;
+  --accent-subtle: rgba(248, 113, 113, 0.12);
+  --accent-border: rgba(248, 113, 113, 0.28);
+
+  --danger: #ef4444;
+  --danger-bg: rgba(127, 29, 29, 0.15);
+  --danger-border: rgba(127, 29, 29, 0.35);
+
+  --success: #f87171;
+  --success-bg: rgba(248, 113, 113, 0.1);
+
+  --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Blue / Ocean theme */
+[data-theme="blue"] {
+  --bg-primary: #080f1a;
+  --bg-secondary: #0f1f33;
+  --bg-tertiary: #162d4a;
+  --bg-card: #0f1f33;
+  --bg-input: #080f1a;
+  --bg-hover: #162d4a;
+  --bg-overlay: rgba(0, 0, 0, 0.8);
+
+  --text-primary: #e0f0ff;
+  --text-secondary: #7eb8f7;
+  --text-muted: #3d6fa0;
+
+  --border-primary: #162d4a;
+  --border-secondary: #0f1f33;
+
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --accent-subtle: rgba(59, 130, 246, 0.12);
+  --accent-border: rgba(59, 130, 246, 0.28);
+
+  --danger: #ef4444;
+  --danger-bg: rgba(127, 29, 29, 0.1);
+  --danger-border: rgba(127, 29, 29, 0.3);
+
+  --success: #3b82f6;
+  --success-bg: rgba(59, 130, 246, 0.1);
+
+  --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
