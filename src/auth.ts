@@ -1,13 +1,18 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
+import Google from "next-auth/providers/google"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "./lib/prisma"
 import bcrypt from "bcryptjs"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
-  session: { strategy: "jwt" }, // Для логіну через пароль це обов'язково
+  session: { strategy: "jwt" },
   providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
     Credentials({
       name: "Credentials",
       credentials: {
@@ -16,7 +21,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
-        
+
         const user = await prisma.user.findUnique({
           where: { email: credentials.email as string }
         });
@@ -32,19 +37,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  // ОСЬ ЦЬОГО НЕ ВИСТАЧАЛО:
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.sub = user.id; // Зберігаємо ID в токен при вході
+        token.sub = user.id;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user && token.sub) {
-        session.user.id = token.sub; // Передаємо ID з токена в сесію
+        session.user.id = token.sub;
       }
       return session;
     }
-  }
+  },
+  pages: {
+    signIn: '/login',
+  },
 })
