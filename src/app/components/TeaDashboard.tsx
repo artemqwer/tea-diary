@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { useTheme } from './ThemeProvider';
 import { useVibration } from './useVibration';
+import { LocaleProvider, useLocale } from './LocaleProvider';
 
 import {
   Play, Pause, RotateCcw, Plus, Home, History,
@@ -291,6 +292,7 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
 const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
   const { theme, setTheme, customColors, setCustomColors } = useTheme();
   const { enabled: vibrationEnabled, setEnabled: setVibrationEnabled, tap } = useVibration();
+  const { locale, setLocale, t } = useLocale();
   const [localColors, setLocalColors] = useState(customColors);
 
   useEffect(() => {
@@ -403,8 +405,8 @@ const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
                 <Smartphone size={20} />
               </div>
               <div>
-                <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Вібрація</div>
-                <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Тактильний відгук при натисканні</div>
+                <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{t.profile.vibration}</div>
+                <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{vibrationEnabled ? t.profile.vibration_on : t.profile.vibration_off}</div>
               </div>
             </div>
             <button
@@ -417,6 +419,25 @@ const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
                 style={{ left: vibrationEnabled ? '24px' : '2px' }}
               />
             </button>
+          </div>
+        </div>
+
+        {/* Language switcher */}
+        <div className="pt-4 mt-2" style={{ borderTop: '1px solid var(--border-primary)' }}>
+          <div className="flex items-center justify-between p-3 rounded-xl" style={{ background: 'var(--bg-tertiary)' }}>
+            <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{t.profile.language}</div>
+            <div className="flex gap-1 rounded-xl p-1" style={{ background: 'var(--bg-secondary)' }}>
+              {(['uk', 'en'] as const).map(l => (
+                <button
+                  key={l}
+                  onClick={() => { tap(); setLocale(l); }}
+                  className="px-3 py-1 rounded-lg text-sm font-medium transition-all"
+                  style={locale === l ? { background: 'var(--accent)', color: 'white' } : { color: 'var(--text-secondary)' }}
+                >
+                  {l === 'uk' ? '🇺🇦 UA' : '🇬🇧 EN'}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -914,6 +935,7 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
 
 // --- ЕКРАН ТАЙМЕРА (GONGFU TIMER) ---
 const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) => {
+  const { t } = useLocale();
   // ─── Режим ───────────────────────────────────────────────
   type TimerMode = 'stopwatch' | 'countdown';
   const [mode, setMode] = useState<TimerMode>('stopwatch');
@@ -1045,9 +1067,9 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
   if (showSummary) {
     return (
       <div className="fixed inset-0 z-[80] flex flex-col items-center justify-center p-8 animate-in zoom-in-95 duration-200" style={{ background: 'var(--bg-primary)' }}>
-        <h2 className="text-2xl font-serif mb-2" style={{ color: 'var(--text-primary)' }}>Як вам чай?</h2>
+        <h2 className="text-2xl font-serif mb-2" style={{ color: 'var(--text-primary)' }}>{t.summary.title}</h2>
         <p className="mb-6 text-center" style={{ color: 'var(--text-muted)' }}>{tea.name} ({tea.year})</p>
-        <p className="font-mono text-sm mb-8" style={{ color: 'var(--accent)', opacity: 0.6 }}>Час сесії: {formatTime(sessionDuration)}</p>
+        <p className="font-mono text-sm mb-8" style={{ color: 'var(--accent)', opacity: 0.6 }}>{t.summary.session_time} {formatTime(sessionDuration)}</p>
 
         <div className="flex gap-2 mb-12">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -1058,7 +1080,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
         </div>
 
         <button onClick={() => { success(); handleFinish(); }} className="w-full max-w-xs py-4 rounded-xl font-bold shadow-lg active:scale-95 transition-transform text-white" style={{ background: 'var(--accent)' }}>
-          Зберегти в історію
+          {t.summary.save}
         </button>
       </div>
     );
@@ -1068,12 +1090,12 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
     <div className="fixed inset-0 z-[70] flex flex-col h-dvh overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
       {/* Хедер */}
       <div className="flex justify-between items-center p-6 pt-12">
-        <button onClick={() => { tap(); onClose(); }} className="flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}><ChevronRight className="rotate-180" size={20} /> Назад</button>
+        <button onClick={() => { tap(); onClose(); }} className="flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}><ChevronRight className="rotate-180" size={20} /> {t.session.back}</button>
         <div className="flex flex-col items-center">
-          <span className="text-xs tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>Tea Session</span>
+          <span className="text-xs tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>{t.session.title}</span>
           <span className="font-mono text-xs mt-0.5" style={{ color: 'var(--accent)', opacity: 0.5 }}>{formatTime(sessionDuration)}</span>
         </div>
-        <button onClick={() => { press(); setShowSummary(true); }} className="font-bold" style={{ color: 'var(--accent)' }}>Фініш</button>
+        <button onClick={() => { press(); setShowSummary(true); }} className="font-bold" style={{ color: 'var(--accent)' }}>{t.session.finish}</button>
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center px-6">
@@ -1091,7 +1113,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
                 : { color: 'var(--text-muted)' }
               }
             >
-              {m === 'stopwatch' ? '⏱ Секундомір' : '⏳ Таймер'}
+              {m === 'stopwatch' ? t.session.mode_stopwatch : t.session.mode_timer}
             </button>
           ))}
         </div>
@@ -1099,21 +1121,21 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
         {/* ─── Параметри ─────────────────────────────────── */}
         <div className="grid grid-cols-3 gap-2 w-full max-w-xs mb-4">
           <div className="py-2 px-1 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-            <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>Вода</span>
+            <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>{t.session.water}</span>
             <div className="flex items-baseline gap-0.5 font-medium text-sm">
               <input inputMode="numeric" className="bg-transparent w-8 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={temp || ''} onChange={e => setTemp(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)} />
               <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>°C</span>
             </div>
           </div>
           <div className="py-2 px-1 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-            <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>Лист</span>
+            <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>{t.session.leaf}</span>
             <div className="flex items-baseline gap-0.5 font-medium text-sm">
               <input inputMode="numeric" className="bg-transparent w-6 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={grams || ''} onChange={e => setGrams(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)} />
               <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>г</span>
             </div>
           </div>
           <div className="py-2 px-1 rounded-xl flex flex-col items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-            <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>Посуд</span>
+            <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>{t.session.vessel}</span>
             <div className="flex items-baseline gap-0.5 font-medium text-sm">
               <input inputMode="numeric" className="bg-transparent w-8 text-center focus:outline-none" style={{ color: 'var(--text-primary)' }} value={volume || ''} onChange={e => setVolume(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)} />
               <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>мл</span>
@@ -1166,7 +1188,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
                   <div className="flex flex-col items-center gap-1.5">
                     <div className="flex items-center gap-1.5">
                       <div className="flex flex-col items-center">
-                        <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>хв</span>
+                        <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>{t.session.min_label}</span>
                         <input
                           inputMode="numeric"
                           className="w-12 text-3xl font-light text-center rounded-lg focus:outline-none bg-transparent"
@@ -1178,7 +1200,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
                       </div>
                       <span className="text-2xl font-light" style={{ color: 'var(--text-muted)' }}>:</span>
                       <div className="flex flex-col items-center">
-                        <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>сек</span>
+                        <span className="text-[9px] uppercase mb-0.5" style={{ color: 'var(--text-muted)' }}>{t.session.sec_label}</span>
                         <input
                           inputMode="numeric"
                           className="w-12 text-3xl font-light text-center rounded-lg focus:outline-none bg-transparent"
@@ -1209,7 +1231,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
                       {formatTime(countdown)}
                     </div>
                     {countdownDone && (
-                      <div className="text-xs mt-1 animate-pulse font-medium" style={{ color: '#ef4444' }}>Час вийшов! 🍵</div>
+                      <div className="text-xs mt-1 animate-pulse font-medium" style={{ color: '#ef4444' }}>{t.session.time_up}</div>
                     )}
                   </div>
                 )}
@@ -1225,7 +1247,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea, onClose: () => void }) 
               ><RotateCcw size={18} /></button>
 
               {countdownDone ? (
-                <button onClick={extendCountdown} className="h-14 px-7 rounded-full font-bold shadow-2xl active:scale-95 transition-all text-white animate-pulse" style={{ background: 'var(--accent)' }}>+1 хв</button>
+                <button onClick={extendCountdown} className="h-14 px-7 rounded-full font-bold shadow-2xl active:scale-95 transition-all text-white animate-pulse" style={{ background: 'var(--accent)' }}>{t.session.extend}</button>
               ) : countdown === null ? (
                 <button onClick={startCountdown} className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl active:scale-95 transition-all text-white" style={{ background: 'var(--accent)' }}>
                   <Play size={30} fill="currentColor" className="ml-1" />
@@ -1338,7 +1360,8 @@ const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
 }
 
 // --- ГОЛОВНИЙ ДАШБОРД ---
-export default function TeaDashboard({ initialTeas, initialSessions, stats, user }: { initialTeas: Tea[], initialSessions: any[], stats: any, user?: any }) {
+function TeaDashboardInner({ initialTeas, initialSessions, stats, user }: { initialTeas: Tea[], initialSessions: any[], stats: any, user?: any }) {
+  const { t, locale } = useLocale();
   const [activeTab, setActiveTab] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTea, setActiveTea] = useState<Tea | null>(null);
@@ -1378,16 +1401,16 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
         onConfirm={async () => { await deleteTeaAction(deleteModal.teaId); setDeleteModal({ ...deleteModal, isOpen: false }); }}
-        title="Видалити чай?"
-        message={`Це назавжди видалить "${deleteModal.teaName}" з вашої бази даних.`}
+        title={t.stash.confirm_delete_title}
+        message={t.stash.confirm_delete_msg(deleteModal.teaName)}
       />
 
       <div className="pb-28">
         <header className="px-6 pt-12 pb-6 flex justify-between items-end" style={{ background: 'linear-gradient(to bottom, var(--bg-secondary), transparent)' }}>
           <div>
-            <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>Сьогодні {new Date().toLocaleDateString('uk-UA', { weekday: 'long' })}</p>
+            <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>{new Date().toLocaleDateString(locale === 'uk' ? 'uk-UA' : 'en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
             <div className="flex items-baseline gap-2">
-              <h1 className="text-2xl font-serif" style={{ color: 'var(--text-primary)' }}>Час Чаю</h1>
+              <h1 className="text-2xl font-serif" style={{ color: 'var(--text-primary)' }}>Tea Diary</h1>
               <span className="text-[10px] font-mono" style={{ color: 'var(--text-muted)' }}>v1.3</span>
             </div>
           </div>
@@ -1399,8 +1422,8 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
             <div className="space-y-8 animate-in fade-in duration-500">
               <button onClick={() => setActiveTab('stash')} className="w-full p-6 rounded-2xl flex items-center justify-between shadow-xl group transition-all" style={{ background: 'var(--accent)' }}>
                 <div className="text-left">
-                  <h2 className="text-xl font-medium text-white mb-1">Нова сесія</h2>
-                  <p className="text-white/70 text-sm">Почати медитацію з чаєм</p>
+                  <h2 className="text-xl font-medium text-white mb-1">{t.home.start_session}</h2>
+                  <p className="text-white/70 text-sm">{t.home.quick_brew}</p>
                 </div>
                 <div className="bg-white/20 p-3 rounded-full group-hover:scale-110 transition-transform text-white"><Play fill="currentColor" size={24} /></div>
               </button>
@@ -1411,26 +1434,26 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
                 <div className="p-4 rounded-2xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
                   <Droplets className="mb-2" size={20} style={{ color: 'var(--accent)', opacity: 0.6 }} />
                   <div className="text-2xl font-medium">{stats.liters}<span className="text-sm ml-1" style={{ color: 'var(--text-muted)' }}>л</span></div>
-                  <p className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Випито за місяць</p>
+                  <p className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>{t.home.stats_hours}</p>
                 </div>
                 <div className="p-4 rounded-2xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
                   <Clock className="mb-2" size={20} style={{ color: 'var(--accent)', opacity: 0.6 }} />
-                  <div className="text-2xl font-medium">{stats.hours}<span className="text-sm ml-1" style={{ color: 'var(--text-muted)' }}>год</span></div>
-                  <p className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Час медитації</p>
+                  <div className="text-2xl font-medium">{stats.hours}<span className="text-sm ml-1" style={{ color: 'var(--text-muted)' }}>{locale === 'uk' ? 'год' : 'h'}</span></div>
+                  <p className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>{t.home.stats_hours}</p>
                 </div>
               </div>
 
               <section>
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-serif" style={{ color: 'var(--text-secondary)' }}>Нещодавні</h3>
-                  <button onClick={() => setActiveTab('history')} className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--accent)' }}>Всі</button>
+                  <h3 className="font-serif" style={{ color: 'var(--text-secondary)' }}>{locale === 'uk' ? 'Нещодавні' : 'Recent'}</h3>
+                  <button onClick={() => setActiveTab('history')} className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--accent)' }}>{locale === 'uk' ? 'Всі' : 'All'}</button>
                 </div>
                 <div className="space-y-3">
                   {initialSessions.slice(0, 3).map(s => (
                     <div key={s.id} className="p-4 rounded-xl flex justify-between items-center" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
                       <div>
-                        <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>{s.tea?.name || 'Видалений чай'}</h4>
-                        <p className="text-[10px] uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>{new Date(s.date).toLocaleDateString()} • {s.steeps} проливів</p>
+                        <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>{s.tea?.name || (locale === 'uk' ? 'Видалений чай' : 'Deleted tea')}</h4>
+                        <p className="text-[10px] uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>{new Date(s.date).toLocaleDateString()} • {s.steeps} {t.history.steeps}</p>
                       </div>
                       <div className="flex gap-0.5">
                         {[...Array(5)].map((_, i) => <div key={i} className="w-1.5 h-1.5 rounded-full" style={{ background: i < s.rating ? 'var(--accent)' : 'var(--border-primary)' }} />)}
@@ -1448,7 +1471,7 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
                 <input
                   className="w-full p-3 pl-10 rounded-xl focus:outline-none transition-colors"
                   style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)' }}
-                  placeholder="Знайти чай у сховищі..."
+                  placeholder={t.stash.search_placeholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -1487,25 +1510,25 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
                 className="w-full py-4 rounded-xl border border-dashed transition-all flex items-center justify-center gap-2"
                 style={{ borderColor: 'var(--border-primary)', color: 'var(--text-muted)' }}
               >
-                <Plus size={20} /> Додати в колекцію
+                <Plus size={20} /> {t.stash.add_tea}
               </button>
             </div>
           )}
 
           {activeTab === 'history' && (
             <div className="space-y-4 animate-in fade-in duration-500">
-              <h2 className="text-xl font-serif mb-6">Історія заварювань</h2>
+              <h2 className="text-xl font-serif mb-6">{t.history.title}</h2>
               {initialSessions.map(session => (
                 <div key={session.id} className="p-4 rounded-xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
                   <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-medium">{session.tea?.name || 'Видалений чай'}</h4>
+                    <h4 className="font-medium">{session.tea?.name || (locale === 'uk' ? 'Видалений чай' : 'Deleted tea')}</h4>
                     <div className="flex gap-0.5">
                       {[...Array(5)].map((_, i) => <div key={i} className="w-1 h-1 rounded-full" style={{ background: i < session.rating ? 'var(--accent)' : 'var(--border-primary)' }} />)}
                     </div>
                   </div>
                   <div className="flex justify-between text-[10px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
                     <span>{new Date(session.date).toLocaleDateString()}</span>
-                    <span>{session.steeps} проливів • {Math.floor(session.duration / 60)}хв</span>
+                    <span>{session.steeps} {t.history.steeps} • {Math.floor(session.duration / 60)}{t.history.time}</span>
                   </div>
                 </div>
               ))}
@@ -1515,10 +1538,18 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
       </div>
 
       <nav className="fixed bottom-0 left-0 right-0 backdrop-blur-lg pb-safe pt-2 px-8 flex justify-between items-center z-50" style={{ background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-primary)', opacity: 0.95 }}>
-        <NavButton tab="home" icon={<Home size={24} />} label="Головна" activeTab={activeTab} setActiveTab={setActiveTab} />
-        <NavButton tab="stash" icon={<Leaf size={24} />} label="Сховище" activeTab={activeTab} setActiveTab={setActiveTab} />
-        <NavButton tab="history" icon={<History size={24} />} label="Історія" activeTab={activeTab} setActiveTab={setActiveTab} />
+        <NavButton tab="home" icon={<Home size={24} />} label={t.nav.home} activeTab={activeTab} setActiveTab={setActiveTab} />
+        <NavButton tab="stash" icon={<Leaf size={24} />} label={t.nav.stash} activeTab={activeTab} setActiveTab={setActiveTab} />
+        <NavButton tab="history" icon={<History size={24} />} label={t.nav.history} activeTab={activeTab} setActiveTab={setActiveTab} />
       </nav>
     </div>
+  );
+}
+
+export default function TeaDashboard(props: { initialTeas: Tea[], initialSessions: any[], stats: any, user?: any }) {
+  return (
+    <LocaleProvider>
+      <TeaDashboardInner {...props} />
+    </LocaleProvider>
   );
 }
