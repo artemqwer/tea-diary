@@ -52,6 +52,7 @@ model Tea {
   id        String   @id @default(cuid())
   name      String
   type      String
+  color     String?
   year      Int
   origin    String
   total     Int

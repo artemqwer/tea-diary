@@ -35,6 +35,7 @@ type Tea = {
   id: string;
   name: string;
   type: string;
+  color?: string | null;
   year: number;
   origin: string;
   total: number;
@@ -585,6 +586,18 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
 
   const [isCustomType, setIsCustomType] = useState(false);
   const [customType, setCustomType] = useState('');
+  const [badgeColor, setBadgeColor] = useState('');
+
+  const colorPresets = [
+    { hex: '', label: 'Авто' },
+    { hex: '#b45309', label: 'Бурштин' },
+    { hex: '#15803d', label: 'Зелений' },
+    { hex: '#1d4ed8', label: 'Синій' },
+    { hex: '#7c3aed', label: 'Фіолет' },
+    { hex: '#be123c', label: 'Червоний' },
+    { hex: '#0e7490', label: 'Бірюза' },
+    { hex: '#a16207', label: 'Золотий' },
+  ];
 
   const [aiLoading, setAiLoading] = useState(false);
   const [aiData, setAiData] = useState<any>(null);
@@ -687,6 +700,7 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
     await addTeaAction({
       name: formData.name,
       type: finalType,
+      color: badgeColor || undefined,
       year: Number(formData.year),
       origin: formData.origin,
       total: Number(formData.total),
@@ -847,6 +861,45 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
                 onChange={e => setFormData({ ...formData, total: Number(e.target.value) })}
               />
             </div>
+          </div>
+
+          {/* Колір вкладки */}
+          <div>
+            <label className={labelClass} style={labelStyle}>Колір вкладки типу</label>
+            <div className="flex flex-wrap gap-2 mt-1">
+              {colorPresets.map(c => (
+                <button
+                  key={c.hex}
+                  type="button"
+                  onClick={() => setBadgeColor(c.hex)}
+                  className="h-8 px-3 rounded-full text-xs font-medium transition-all border-2"
+                  style={{
+                    background: c.hex ? c.hex + '22' : 'var(--bg-tertiary)',
+                    color: c.hex || 'var(--text-secondary)',
+                    borderColor: badgeColor === c.hex ? (c.hex || 'var(--accent)') : 'transparent',
+                    outline: badgeColor === c.hex ? `2px solid ${c.hex || 'var(--accent)'}` : 'none',
+                    outlineOffset: '1px',
+                  }}
+                >
+                  {c.hex && <span className="inline-block w-2 h-2 rounded-full mr-1.5" style={{ background: c.hex }} />}
+                  {c.label}
+                </button>
+              ))}
+              {/* Custom color */}
+              <label className="h-8 w-8 rounded-full overflow-hidden shrink-0 cursor-pointer relative border-2 transition-all"
+                style={{ borderColor: badgeColor && !colorPresets.some(c => c.hex === badgeColor) ? badgeColor : 'var(--border-primary)', background: badgeColor || 'var(--bg-tertiary)' }}>
+                <input type="color" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" value={badgeColor || '#b45309'} onChange={e => setBadgeColor(e.target.value)} />
+              </label>
+            </div>
+            {/* Preview */}
+            {badgeColor && (
+              <div className="mt-2 flex items-center gap-2 text-xs" style={{ color: 'var(--text-muted)' }}>
+                <span>Попередній вигляд:</span>
+                <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-medium" style={{ background: badgeColor + '22', color: badgeColor, border: `1px solid ${badgeColor}55` }}>
+                  {isCustomType ? (customType || 'Тип') : formData.type}
+                </span>
+              </div>
+            )}
           </div>
 
           <button type="submit" className="w-full text-white font-medium py-4 rounded-xl mt-4 shadow-lg active:scale-95 transition-all" style={{ background: 'var(--accent)' }}>
@@ -1211,7 +1264,13 @@ export default function TeaDashboard({ initialTeas, initialSessions, stats, user
                   return (
                     <div key={tea.id} onClick={() => setActiveTea(tea)} className="rounded-2xl p-4 active:scale-98 transition-transform cursor-pointer group" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
                       <div className="flex justify-between items-start mb-2">
-                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full" style={{ border: '1px solid var(--border-primary)', background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>{tea.type}</span>
+                        <span
+                          className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-medium"
+                          style={tea.color
+                            ? { background: tea.color + '22', color: tea.color, border: `1px solid ${tea.color}55` }
+                            : { border: '1px solid var(--border-primary)', background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }
+                          }
+                        >{tea.type}</span>
                         <button onClick={(e) => confirmDelete(e, tea)} className="p-1 transition-colors hover:text-red-400" style={{ color: 'var(--text-muted)' }}><Trash2 size={18} /></button>
                       </div>
                       <div className="flex justify-between items-end mb-3">

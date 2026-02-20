@@ -9,6 +9,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 export async function addTeaAction(data: {
   name: string;
   type: string;
+  color?: string;
   year: number;
   origin: string;
   total: number;
@@ -22,10 +23,11 @@ export async function addTeaAction(data: {
     data: {
       name: data.name,
       type: data.type,
+      color: data.color || null,
       year: data.year,
       origin: data.origin,
       total: data.total,
-      remaining: data.total, // Спочатку залишок дорівнює повній вазі
+      remaining: data.total,
       userId: userId
     }
   });
