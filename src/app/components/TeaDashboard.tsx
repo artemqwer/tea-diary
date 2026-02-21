@@ -1957,7 +1957,7 @@ const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
     const diff = startDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
     startDate.setDate(diff);
 
-    let currentDate = new Date(startDate);
+    const currentDate = new Date(startDate);
     // Loop until we reach today (or end of this week)
     while (currentDate <= today) {
       const week = [];

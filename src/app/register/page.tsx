@@ -78,7 +78,7 @@ export default function RegisterPage() {
 
           <div>
             <label className="text-xs text-stone-500 uppercase tracking-widest block mb-1.5 ml-1">
-              Ім'я
+              Ім&apos;я
             </label>
             <div className="relative">
               <User className="absolute left-3.5 top-3.5 text-stone-600" size={18} />

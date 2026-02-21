@@ -36,10 +36,10 @@ export default async function Page() {
   ]);
 
   // Розрахунок статистики саме за ПОТОЧНИЙ МІСЯЦЬ (згідно зі специфікацією)
-  const monthlySessions = allSessions.filter(s => s.date >= monthStart);
+  const monthlySessions = allSessions.filter((s: any) => s.date >= monthStart);
 
   const monthlyStats = monthlySessions.reduce(
-    (acc, s) => {
+    (acc: any, s: any) => {
       // Об'єм води: кількість проливів * об'єм посуду (мл)
       const sessionVolumeLiters = (s.steeps * s.volume) / 1000;
 
