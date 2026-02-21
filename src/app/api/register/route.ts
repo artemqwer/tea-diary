@@ -8,29 +8,20 @@ export async function POST(req: Request) {
 
     // Валідація
     if (!name || !email || !password) {
-      return NextResponse.json(
-        { error: 'Усі поля обов\'язкові' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Усі поля обов'язкові" }, { status: 400 });
     }
 
     if (password.length < 6) {
-      return NextResponse.json(
-        { error: 'Пароль має бути не менше 6 символів' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Пароль має бути не менше 6 символів' }, { status: 400 });
     }
 
     // Перевіряємо чи існує користувач
     const existingUser = await prisma.user.findUnique({
-      where: { email }
+      where: { email },
     });
 
     if (existingUser) {
-      return NextResponse.json(
-        { error: 'Користувач з таким email вже існує' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Користувач з таким email вже існує' }, { status: 400 });
     }
 
     // Хешуємо пароль
@@ -42,7 +33,7 @@ export async function POST(req: Request) {
         name,
         email,
         password: hashedPassword,
-      }
+      },
     });
 
     return NextResponse.json(
@@ -51,9 +42,6 @@ export async function POST(req: Request) {
     );
   } catch (error) {
     console.error('Registration error:', error);
-    return NextResponse.json(
-      { error: 'Помилка сервера' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Помилка сервера' }, { status: 500 });
   }
 }

@@ -62,7 +62,6 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-sm bg-stone-900 border border-stone-800 rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in duration-500">
-
       {/* GitHub Sign In */}
       <button
         onClick={handleGitHubSignIn}
@@ -81,7 +80,6 @@ function LoginForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-
         {/* Success Message */}
         {registered && (
           <div className="bg-green-900/20 border border-green-900/50 text-green-400 text-sm p-3 rounded-xl flex items-center gap-2">
@@ -97,7 +95,9 @@ function LoginForm() {
         )}
 
         <div>
-          <label className="text-xs text-stone-500 uppercase tracking-widest block mb-1.5 ml-1">Email</label>
+          <label className="text-xs text-stone-500 uppercase tracking-widest block mb-1.5 ml-1">
+            Email
+          </label>
           <div className="relative">
             <Mail className="absolute left-3.5 top-3.5 text-stone-600" size={18} />
             <input
@@ -106,13 +106,15 @@ function LoginForm() {
               className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 pl-10 pr-4 text-stone-200 focus:border-amber-600/50 focus:outline-none transition-colors"
               placeholder="admin@tea.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
             />
           </div>
         </div>
 
         <div>
-          <label className="text-xs text-stone-500 uppercase tracking-widest block mb-1.5 ml-1">Пароль</label>
+          <label className="text-xs text-stone-500 uppercase tracking-widest block mb-1.5 ml-1">
+            Пароль
+          </label>
           <div className="relative">
             <Lock className="absolute left-3.5 top-3.5 text-stone-600" size={18} />
             <input
@@ -121,7 +123,7 @@ function LoginForm() {
               className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 pl-10 pr-4 text-stone-200 focus:border-amber-600/50 focus:outline-none transition-colors"
               placeholder="••••••••"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
             />
           </div>
         </div>
@@ -140,7 +142,10 @@ function LoginForm() {
       <div className="mt-6 text-center">
         <p className="text-stone-500 text-sm">
           Немає акаунту?{' '}
-          <Link href="/register" className="text-amber-500 hover:text-amber-400 font-medium transition-colors">
+          <Link
+            href="/register"
+            className="text-amber-500 hover:text-amber-400 font-medium transition-colors"
+          >
             Зареєструватись
           </Link>
         </p>
@@ -152,7 +157,6 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div className="min-h-dvh bg-stone-950 flex flex-col items-center justify-center p-6 text-stone-200">
-
       {/* Logo / Header */}
       <div className="mb-8 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="w-16 h-16 bg-gradient-to-tr from-amber-700 to-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-amber-900/20">
@@ -166,9 +170,7 @@ export default function LoginPage() {
         <LoginForm />
       </Suspense>
 
-      <p className="mt-8 text-stone-600 text-xs">
-        © 2026 Tea Diary App
-      </p>
+      <p className="mt-8 text-stone-600 text-xs">© 2026 Tea Diary App</p>
     </div>
   );
 }

@@ -2,44 +2,59 @@
   "name": "tea-diary",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.15.4",
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint",
-    "vercel-build": "prisma generate && prisma db push && next build --webpack"
+    "lint:fix": "next lint --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "type-check": "tsc --noEmit",
+    "vercel-build": "prisma generate && prisma db push && next build --webpack",
+    "prepare": "husky"
   },
   "dependencies": {
-    "@auth/prisma-adapter": "^2.11.1",
-    "@ducanh2912/next-pwa": "^10.2.5",
-    "@google/generative-ai": "^0.24.1",
-    "@jridgewell/sourcemap-codec": "^1.5.5",
-    "@prisma/client": "^5.22.0",
-    "bcryptjs": "^3.0.3",
-    "clsx": "^2.1.0",
-    "date-fns": "^3.3.1",
-    "dexie": "^3.2.4",
-    "dexie-react-hooks": "^1.1.7",
-    "framer-motion": "^11.0.8",
-    "glob": "^13.0.0",
-    "inflight": "^1.0.6",
-    "lucide-react": "^0.344.0",
-    "next": "^16.1.6",
-    "next-auth": "^5.0.0-beta.30",
-    "prisma": "^5.22.0",
-    "react": "^18",
-    "react-dom": "^18",
-    "tailwind-merge": "^2.2.1",
-    "zod": "^4.3.6"
+    "@auth/prisma-adapter": "~2.11",
+    "@ducanh2912/next-pwa": "~10.2",
+    "@google/generative-ai": "~0.24",
+    "@prisma/client": "~5.22",
+    "bcryptjs": "~3.0",
+    "lucide-react": "~0.479",
+    "next": "~16.1",
+    "next-auth": "~5.0.0-beta.30",
+    "prisma": "~5.22",
+    "react": "~18.3",
+    "react-dom": "~18.3",
+    "zod": "~4.3"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.0.1",
-    "postcss": "^8",
-    "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "@types/bcryptjs": "~2.4",
+    "@types/node": "~22.13",
+    "@types/react": "~18.3",
+    "@types/react-dom": "~18.3",
+    "autoprefixer": "~10.4",
+    "eslint": "~9.20",
+    "eslint-config-next": "~16.1",
+    "husky": "~9.1",
+    "lint-staged": "~15.4",
+    "postcss": "~8.5",
+    "prettier": "~3.5",
+    "tailwindcss": "~3.4",
+    "typescript": "~5.8"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md,yml,yaml}": [
+      "prettier --write"
+    ]
   }
 }

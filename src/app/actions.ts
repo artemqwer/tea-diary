@@ -1,9 +1,9 @@
-'use server'
+'use server';
 
-import { prisma } from "../lib/prisma"
-import { auth, signOut } from "../auth" // Додано signOut в імпорт
-import { revalidatePath } from "next/cache"
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { prisma } from '../lib/prisma';
+import { auth, signOut } from '../auth'; // Додано signOut в імпорт
+import { revalidatePath } from 'next/cache';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // --- ДОДАВАННЯ НОВОГО ЧАЮ ---
 export async function addTeaAction(data: {
@@ -17,7 +17,7 @@ export async function addTeaAction(data: {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId) throw new Error("Unauthorized");
+  if (!userId) throw new Error('Unauthorized');
 
   await prisma.tea.create({
     data: {
@@ -28,11 +28,11 @@ export async function addTeaAction(data: {
       origin: data.origin,
       total: data.total,
       remaining: data.total,
-      userId: userId
-    }
+      userId: userId,
+    },
   });
 
-  revalidatePath("/");
+  revalidatePath('/');
 }
 
 // --- ВИДАЛЕННЯ ЧАЮ ---
@@ -40,19 +40,19 @@ export async function deleteTeaAction(teaId: string) {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId) throw new Error("Unauthorized");
+  if (!userId) throw new Error('Unauthorized');
 
   // Видаляємо чай тільки якщо він належить поточному юзеру
   try {
     await prisma.tea.delete({
       where: {
         id: teaId,
-        userId: userId
-      }
+        userId: userId,
+      },
     });
-    revalidatePath("/");
+    revalidatePath('/');
   } catch (error) {
-    console.error("Failed to delete tea:", error);
+    console.error('Failed to delete tea:', error);
   }
 }
 
@@ -67,11 +67,11 @@ export async function addSessionAction(data: {
 }) {
   const session = await auth();
   const userId = session?.user?.id;
-  if (!userId) throw new Error("Unauthorized");
+  if (!userId) throw new Error('Unauthorized');
 
   // 1. Створюємо запис сесії
   await prisma.session.create({
-    data: { ...data, userId }
+    data: { ...data, userId },
   });
 
   // 2. Віднімаємо вагу від запасу чаю
@@ -80,11 +80,11 @@ export async function addSessionAction(data: {
     const newRemaining = Math.max(0, tea.remaining - data.grams);
     await prisma.tea.update({
       where: { id: data.teaId },
-      data: { remaining: newRemaining }
+      data: { remaining: newRemaining },
     });
   }
 
-  revalidatePath("/");
+  revalidatePath('/');
 }
 
 // --- ВИХІД З АКАУНТУ (НОВЕ) ---
@@ -97,28 +97,28 @@ export async function updateUserAvatarAction(imageUrl: string) {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId) throw new Error("Unauthorized");
+  if (!userId) throw new Error('Unauthorized');
 
   await prisma.user.update({
     where: { id: userId },
-    data: { image: imageUrl }
+    data: { image: imageUrl },
   });
 
-  revalidatePath("/");
+  revalidatePath('/');
 }
 
 // --- ШІ РОЗПІЗНАВАННЯ ЧАЮ (GEMINI) ---
 
 export async function analyzeTeaImageAction(formData: FormData) {
-  const file = formData.get("image") as File;
-  if (!file) return { error: "No image provided" };
+  const file = formData.get('image') as File;
+  if (!file) return { error: 'No image provided' };
 
   try {
     const buffer = await file.arrayBuffer();
-    const base64Image = Buffer.from(buffer).toString("base64");
+    const base64Image = Buffer.from(buffer).toString('base64');
 
-    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || "");
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || '');
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     const prompt = `Analyze this image of a tea packaging or cake. 
     Extract the following information and return ONLY a valid JSON object:
@@ -145,11 +145,11 @@ export async function analyzeTeaImageAction(formData: FormData) {
     const text = response.text();
 
     // Clean up markdown code blocks if present
-    const cleanJson = text.replace(/```json|```/g, "").trim();
+    const cleanJson = text.replace(/```json|```/g, '').trim();
 
     return JSON.parse(cleanJson);
   } catch (error) {
-    console.error("AI Analysis failed:", error);
-    return { error: "Failed to analyze image" };
+    console.error('AI Analysis failed:', error);
+    return { error: 'Failed to analyze image' };
   }
 }

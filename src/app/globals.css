@@ -39,7 +39,7 @@
 }
 
 /* Light theme */
-[data-theme="light"] {
+[data-theme='light'] {
   --bg-primary: #fafaf9;
   --bg-secondary: #f5f5f4;
   --bg-tertiary: #e7e5e4;
@@ -71,7 +71,7 @@
 }
 
 /* Green Tea theme */
-[data-theme="green"] {
+[data-theme='green'] {
   --bg-primary: #0a1a0f;
   --bg-secondary: #112218;
   --bg-tertiary: #1a3322;
@@ -103,7 +103,7 @@
 }
 
 /* Purple theme */
-[data-theme="purple"] {
+[data-theme='purple'] {
   --bg-primary: #0d0a1a;
   --bg-secondary: #16102b;
   --bg-tertiary: #231a3d;
@@ -135,7 +135,7 @@
 }
 
 /* Red / Crimson theme */
-[data-theme="red"] {
+[data-theme='red'] {
   --bg-primary: #1a0a0a;
   --bg-secondary: #2b1010;
   --bg-tertiary: #3d1818;
@@ -167,7 +167,7 @@
 }
 
 /* Blue / Ocean theme */
-[data-theme="blue"] {
+[data-theme='blue'] {
   --bg-primary: #080f1a;
   --bg-secondary: #0f1f33;
   --bg-tertiary: #162d4a;
@@ -245,7 +245,9 @@ body {
   overscroll-behavior-y: none;
   user-select: none;
   -webkit-touch-callout: none;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Allow text selection in specific areas if needed */

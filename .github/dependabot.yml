@@ -1,0 +1,43 @@
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'Europe/Kyiv'
+    # Wait 7 days before recommending updates (avoids fast-breaking releases)
+    open-pull-requests-limit: 10
+    groups:
+      # Group all non-major TypeScript type updates together
+      type-definitions:
+        patterns:
+          - '@types/*'
+        update-types:
+          - 'minor'
+          - 'patch'
+      # Group all Next.js / React ecosystem updates
+      nextjs-ecosystem:
+        patterns:
+          - 'next'
+          - 'next-auth'
+          - 'react'
+          - 'react-dom'
+          - 'eslint-config-next'
+        update-types:
+          - 'minor'
+          - 'patch'
+    ignore:
+      # Don't auto-bump @types/node major version —
+      # upgrade manually when you upgrade Node itself
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'Europe/Kyiv'
