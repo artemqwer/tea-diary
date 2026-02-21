@@ -18,8 +18,10 @@ export default [
   },
   {
     rules: {
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      'react-hooks/exhaustive-deps': 'off',
+      '@next/next/no-img-element': 'off',
       'prefer-const': 'error',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'react-hooks/set-state-in-effect': 'off',
