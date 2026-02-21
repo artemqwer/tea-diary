@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from './components/ThemeProvider';
+import { Analytics } from '@vercel/analytics/react';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
@@ -34,6 +35,7 @@ export default function RootLayout({
         style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
       >
         <ThemeProvider>{children}</ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
