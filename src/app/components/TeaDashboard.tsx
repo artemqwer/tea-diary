@@ -105,7 +105,7 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }: any) 
   const { t } = useLocale();
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-100 bg-black/80 backdrop-blur-xs flex items-center justify-center p-6 animate-in fade-in duration-200">
       <div
         className="w-full max-w-sm rounded-2xl p-6 shadow-2xl"
         style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
@@ -223,7 +223,7 @@ const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-100 bg-black/80 backdrop-blur-xs flex items-center justify-center p-6 animate-in fade-in duration-200">
       <div
         className="w-full max-w-sm rounded-2xl p-6 shadow-2xl relative"
         style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
@@ -499,7 +499,7 @@ const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-100 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div
         className="w-full max-w-sm rounded-2xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto"
         style={{
@@ -633,7 +633,7 @@ const ThemeSettingsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
               }}
             >
               <div
-                className="w-5 h-5 rounded-full bg-white shadow-sm absolute top-0.5 transition-all duration-200"
+                className="w-5 h-5 rounded-full bg-white shadow-xs absolute top-0.5 transition-all duration-200"
                 style={{ left: vibrationEnabled ? '24px' : '2px' }}
               />
             </button>
@@ -1000,7 +1000,7 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
     onClose();
   };
 
-  const inputClass = 'w-full rounded-xl p-3 focus:outline-none transition-colors';
+  const inputClass = 'w-full rounded-xl p-3 focus:outline-hidden transition-colors';
   const inputStyle = {
     background: 'var(--bg-primary)',
     border: '1px solid var(--border-primary)',
@@ -1010,7 +1010,7 @@ const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
   const labelStyle = { color: 'var(--text-muted)' };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-xs z-90 flex items-end sm:items-center justify-center p-4">
       <div
         className="w-full max-w-md rounded-2xl p-6 shadow-2xl animate-in slide-in-from-bottom-10 sm:zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto"
         style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
@@ -1457,7 +1457,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => void }) 
   if (showSummary) {
     return (
       <div
-        className="fixed inset-0 z-[80] flex flex-col items-center justify-center p-8 animate-in zoom-in-95 duration-200"
+        className="fixed inset-0 z-80 flex flex-col items-center justify-center p-8 animate-in zoom-in-95 duration-200"
         style={{ background: 'var(--bg-primary)' }}
       >
         <h2 className="text-2xl font-serif mb-2" style={{ color: 'var(--text-primary)' }}>
@@ -1505,7 +1505,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => void }) 
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex flex-col h-dvh overflow-hidden"
+      className="fixed inset-0 z-70 flex flex-col h-dvh overflow-hidden"
       style={{ background: 'var(--bg-primary)' }}
     >
       {/* Хедер */}
@@ -1593,7 +1593,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => void }) 
             <div className="flex items-baseline gap-0.5 font-medium text-sm">
               <input
                 inputMode="numeric"
-                className="bg-transparent w-8 text-center focus:outline-none"
+                className="bg-transparent w-8 text-center focus:outline-hidden"
                 style={{ color: 'var(--text-primary)' }}
                 value={temp || ''}
                 onChange={e => setTemp(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)}
@@ -1613,7 +1613,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => void }) 
             <div className="flex items-baseline gap-0.5 font-medium text-sm">
               <input
                 inputMode="numeric"
-                className="bg-transparent w-6 text-center focus:outline-none"
+                className="bg-transparent w-6 text-center focus:outline-hidden"
                 style={{ color: 'var(--text-primary)' }}
                 value={grams || ''}
                 onChange={e => setGrams(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)}
@@ -1633,7 +1633,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => void }) 
             <div className="flex items-baseline gap-0.5 font-medium text-sm">
               <input
                 inputMode="numeric"
-                className="bg-transparent w-8 text-center focus:outline-none"
+                className="bg-transparent w-8 text-center focus:outline-hidden"
                 style={{ color: 'var(--text-primary)' }}
                 value={volume || ''}
                 onChange={e => setVolume(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)}
@@ -1773,7 +1773,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => void }) 
                         </span>
                         <input
                           inputMode="numeric"
-                          className="w-12 text-3xl font-light text-center rounded-lg focus:outline-none bg-transparent"
+                          className="w-12 text-3xl font-light text-center rounded-lg focus:outline-hidden bg-transparent"
                           style={{
                             color: 'var(--text-primary)',
                             border: '1px solid var(--border-primary)',
@@ -1798,7 +1798,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => void }) 
                         </span>
                         <input
                           inputMode="numeric"
-                          className="w-12 text-3xl font-light text-center rounded-lg focus:outline-none bg-transparent"
+                          className="w-12 text-3xl font-light text-center rounded-lg focus:outline-hidden bg-transparent"
                           style={{
                             color: 'var(--text-primary)',
                             border: '1px solid var(--border-primary)',
@@ -1828,7 +1828,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => void }) 
                             setTargetMinutes(String(Math.floor(Number(s) / 60)));
                             setTargetSeconds('00');
                           }}
-                          className="px-1.5 py-0.5 rounded text-[10px]"
+                          className="px-1.5 py-0.5 rounded-sm text-[10px]"
                           style={{
                             background: 'var(--bg-primary)',
                             color: 'var(--text-secondary)',
@@ -1983,7 +1983,7 @@ const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
 
   return (
     <div
-      className="p-5 rounded-2xl shadow-sm"
+      className="p-5 rounded-2xl shadow-xs"
       style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
     >
       <div className="flex justify-between items-center mb-4">
@@ -2003,7 +2003,7 @@ const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
               {week.map((day, j) => (
                 <div
                   key={j}
-                  className="w-2.5 h-2.5 rounded-sm transition-colors"
+                  className="w-2.5 h-2.5 rounded-xs transition-colors"
                   style={{
                     background:
                       day.count === 0
@@ -2028,12 +2028,12 @@ const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
       >
         <span>Less</span>
         <div
-          className="w-2 h-2 rounded-sm"
+          className="w-2 h-2 rounded-xs"
           style={{ background: 'var(--bg-tertiary)', opacity: 0.4 }}
         />
-        <div className="w-2 h-2 rounded-sm" style={{ background: 'var(--accent)', opacity: 0.3 }} />
-        <div className="w-2 h-2 rounded-sm" style={{ background: 'var(--accent)', opacity: 0.6 }} />
-        <div className="w-2 h-2 rounded-sm" style={{ background: 'var(--accent)' }} />
+        <div className="w-2 h-2 rounded-xs" style={{ background: 'var(--accent)', opacity: 0.3 }} />
+        <div className="w-2 h-2 rounded-xs" style={{ background: 'var(--accent)', opacity: 0.6 }} />
+        <div className="w-2 h-2 rounded-xs" style={{ background: 'var(--accent)' }} />
         <span>More</span>
       </div>
     </div>
@@ -2258,7 +2258,7 @@ function TeaDashboardInner({
             <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-300">
               <div className="relative">
                 <input
-                  className="w-full p-3 pl-10 rounded-xl focus:outline-none transition-colors"
+                  className="w-full p-3 pl-10 rounded-xl focus:outline-hidden transition-colors"
                   style={{
                     background: 'var(--bg-secondary)',
                     border: '1px solid var(--border-primary)',

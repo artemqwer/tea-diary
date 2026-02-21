@@ -59,7 +59,7 @@ export default function RegisterPage() {
     <div className="min-h-dvh bg-stone-950 flex flex-col items-center justify-center p-6 text-stone-200">
       {/* Лого / Заголовок */}
       <div className="mb-8 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="w-16 h-16 bg-gradient-to-tr from-amber-700 to-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-amber-900/20">
+        <div className="w-16 h-16 bg-linear-to-tr from-amber-700 to-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-amber-900/20">
           <Leaf size={32} className="text-white" />
         </div>
         <h1 className="text-3xl font-serif text-stone-100">Чайний Щоденник</h1>
@@ -85,7 +85,7 @@ export default function RegisterPage() {
               <input
                 type="text"
                 required
-                className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 pl-10 pr-4 text-stone-200 focus:border-amber-600/50 focus:outline-none transition-colors"
+                className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 pl-10 pr-4 text-stone-200 focus:border-amber-600/50 focus:outline-hidden transition-colors"
                 placeholder="Ваше ім'я"
                 value={name}
                 onChange={e => setName(e.target.value)}
@@ -102,7 +102,7 @@ export default function RegisterPage() {
               <input
                 type="email"
                 required
-                className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 pl-10 pr-4 text-stone-200 focus:border-amber-600/50 focus:outline-none transition-colors"
+                className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 pl-10 pr-4 text-stone-200 focus:border-amber-600/50 focus:outline-hidden transition-colors"
                 placeholder="tea@example.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
@@ -119,7 +119,7 @@ export default function RegisterPage() {
               <input
                 type="password"
                 required
-                className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 pl-10 pr-4 text-stone-200 focus:border-amber-600/50 focus:outline-none transition-colors"
+                className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 pl-10 pr-4 text-stone-200 focus:border-amber-600/50 focus:outline-hidden transition-colors"
                 placeholder="Мінімум 6 символів"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
@@ -136,7 +136,7 @@ export default function RegisterPage() {
               <input
                 type="password"
                 required
-                className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 pl-10 pr-4 text-stone-200 focus:border-amber-600/50 focus:outline-none transition-colors"
+                className="w-full bg-stone-950 border border-stone-800 rounded-xl py-3 pl-10 pr-4 text-stone-200 focus:border-amber-600/50 focus:outline-hidden transition-colors"
                 placeholder="Повторіть пароль"
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
