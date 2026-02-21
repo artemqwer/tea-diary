@@ -1548,7 +1548,7 @@ const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => void }) 
 
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         <h2
-          className="text-lg font-serif mb-3 text-center"
+          className="text-lg font-serif mb-3 text-center truncate w-full px-2"
           style={{ color: 'var(--text-primary)' }}
         >
           {tea.name}
@@ -1957,17 +1957,21 @@ const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
     const diff = startDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
     startDate.setDate(diff);
 
+    const sessionsByDate = sessions.reduce(
+      (acc, s) => {
+        const dateStr = new Date(s.date).toDateString();
+        acc[dateStr] = (acc[dateStr] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
     const currentDate = new Date(startDate);
-    // Loop until we reach today (or end of this week)
     while (currentDate <= today) {
       const week = [];
       for (let i = 0; i < 7; i++) {
         const dateStr = currentDate.toDateString();
-        // Check if there are sessions for this day
-        // Note: sessions.date is likely a string or Date object.
-        // In the component props it comes as serialized JSON often, passing Dates might need conversion if not strictly typed.
-        // Assuming sessions props retain Date objects or ISO strings.
-        const count = sessions.filter(s => new Date(s.date).toDateString() === dateStr).length;
+        const count = sessionsByDate[dateStr] || 0;
 
         week.push({ date: new Date(currentDate), count });
         currentDate.setDate(currentDate.getDate() + 1);
@@ -2218,12 +2222,15 @@ function TeaDashboardInner({
                         border: '1px solid var(--border-primary)',
                       }}
                     >
-                      <div>
-                        <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>
+                      <div className="min-w-0 flex-1">
+                        <h4
+                          className="font-medium truncate"
+                          style={{ color: 'var(--text-primary)' }}
+                        >
                           {s.tea?.name || (locale === 'uk' ? 'Видалений чай' : 'Deleted tea')}
                         </h4>
                         <p
-                          className="text-[10px] uppercase mt-0.5"
+                          className="text-[10px] uppercase mt-0.5 truncate"
                           style={{ color: 'var(--text-muted)' }}
                         >
                           {new Date(s.date).toLocaleDateString()} • {s.steeps} {t.history.steeps}
@@ -2308,15 +2315,15 @@ function TeaDashboardInner({
                           <Trash2 size={18} />
                         </button>
                       </div>
-                      <div className="flex justify-between items-end mb-3">
+                      <div className="flex justify-between items-end mb-3 gap-3">
                         <h3
-                          className="font-medium text-lg"
+                          className="font-medium text-lg truncate min-w-0 flex-1"
                           style={{ color: 'var(--text-primary)' }}
                         >
                           {tea.name}
                         </h3>
                         <span
-                          className="text-xs font-mono"
+                          className="text-xs font-mono shrink-0"
                           style={{ color: 'var(--text-secondary)' }}
                         >
                           {tea.remaining} / {tea.total}г
@@ -2362,11 +2369,11 @@ function TeaDashboardInner({
                     border: '1px solid var(--border-primary)',
                   }}
                 >
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-medium">
+                  <div className="flex justify-between items-start mb-2 gap-3">
+                    <h4 className="font-medium truncate min-w-0 flex-1">
                       {session.tea?.name || (locale === 'uk' ? 'Видалений чай' : 'Deleted tea')}
                     </h4>
-                    <div className="flex gap-0.5">
+                    <div className="flex gap-0.5 shrink-0 mt-1">
                       {[...Array(5)].map((_, i) => (
                         <div
                           key={i}
