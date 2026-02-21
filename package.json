@@ -23,7 +23,7 @@
     "@auth/prisma-adapter": "~2.11",
     "@ducanh2912/next-pwa": "~10.2",
     "@google/generative-ai": "~0.24",
-    "@prisma/client": "~5.22",
+    "@prisma/client": "~7.4",
     "@vercel/analytics": "^1.6.1",
     "bcryptjs": "~3.0",
     "clsx": "^2.1.1",
