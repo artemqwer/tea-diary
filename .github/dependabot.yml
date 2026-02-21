@@ -34,6 +34,12 @@ updates:
       - dependency-name: '@types/node'
         update-types: ['version-update:semver-major']
 
+      # Ignore Prisma v7 major breaking updates until Driver Adapters are refactored
+      - dependency-name: 'prisma'
+        versions: ['>= 6.0.0']
+      - dependency-name: '@prisma/client'
+        versions: ['>= 6.0.0']
+
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
