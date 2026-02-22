@@ -2066,6 +2066,7 @@ function TeaDashboardInner({
   const [isAddModalOpen, setAddModalOpen] = useState(false);
 
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, teaId: '', teaName: '' });
+  const router = useRouter();
 
   const filteredTeas = useMemo(() => {
     return initialTeas.filter(
@@ -2097,6 +2098,7 @@ function TeaDashboardInner({
         onConfirm={async () => {
           await deleteTeaAction(deleteModal.teaId);
           setDeleteModal({ ...deleteModal, isOpen: false });
+          router.refresh();
         }}
         title={t.stash.confirm_delete_title}
         message={t.stash.confirm_delete_msg(deleteModal.teaName)}
