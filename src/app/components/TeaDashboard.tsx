@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useTransition } from 'react';
 import {
   addTeaAction,
   deleteTeaAction,
@@ -71,14 +71,25 @@ function TeaDashboardInner({
   user?: any;
 }) {
   const { t, locale } = useLocale();
+  const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTea, setActiveTea] = useState<Tea | null>(null);
   const [currentUser, setCurrentUser] = useState(user);
+  const [localTeas, setLocalTeas] = useState(initialTeas);
+  const [localSessions, setLocalSessions] = useState(initialSessions);
 
   useEffect(() => {
     setCurrentUser(user);
   }, [user]);
+
+  useEffect(() => {
+    setLocalTeas(initialTeas);
+  }, [initialTeas]);
+
+  useEffect(() => {
+    setLocalSessions(initialSessions);
+  }, [initialSessions]);
 
   // Стан для модалки додавання
   const [isAddModalOpen, setAddModalOpen] = useState(false);
@@ -88,13 +99,13 @@ function TeaDashboardInner({
   const router = useRouter();
 
   const filteredTeas = useMemo(() => {
-    return initialTeas.filter(
+    return localTeas.filter(
       t =>
         t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         t.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
         t.origin.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [initialTeas, searchQuery]);
+  }, [localTeas, searchQuery]);
 
   const confirmDelete = (e: React.MouseEvent, tea: Tea) => {
     e.stopPropagation();
@@ -114,10 +125,15 @@ function TeaDashboardInner({
       <ConfirmationModal
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
-        onConfirm={async () => {
-          await deleteTeaAction(deleteModal.teaId);
+        onConfirm={() => {
+          const idToDelete = deleteModal.teaId;
           setDeleteModal({ ...deleteModal, isOpen: false });
-          router.refresh();
+          setLocalTeas(prev => prev.filter(t => t.id !== idToDelete));
+
+          startTransition(async () => {
+            await deleteTeaAction(idToDelete);
+            router.refresh();
+          });
         }}
         title={t.stash.confirm_delete_title}
         message={t.stash.confirm_delete_msg(deleteModal.teaName)}
@@ -126,10 +142,15 @@ function TeaDashboardInner({
       <ConfirmationModal
         isOpen={deleteSessionModal.isOpen}
         onClose={() => setDeleteSessionModal({ isOpen: false, sessionId: '' })}
-        onConfirm={async () => {
-          await deleteSessionAction(deleteSessionModal.sessionId);
+        onConfirm={() => {
+          const idToDelete = deleteSessionModal.sessionId;
           setDeleteSessionModal({ isOpen: false, sessionId: '' });
-          router.refresh();
+          setLocalSessions(prev => prev.filter(s => s.id !== idToDelete));
+
+          startTransition(async () => {
+            await deleteSessionAction(idToDelete);
+            router.refresh();
+          });
         }}
         title={t.history.confirm_delete_title}
         message={t.history.confirm_delete_msg}

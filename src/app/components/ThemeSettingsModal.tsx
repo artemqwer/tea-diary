@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import { useTheme } from './ThemeProvider';
 import { useVibration } from './useVibration';
 import { useLocale } from './LocaleProvider';
@@ -15,6 +15,7 @@ export const ThemeSettingsModal = ({
   const { enabled: vibrationEnabled, setEnabled: setVibrationEnabled, tap } = useVibration();
   const { locale, t } = useLocale();
   const [localColors, setLocalColors] = useState(customColors);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     setLocalColors(customColors);
@@ -89,10 +90,12 @@ export const ThemeSettingsModal = ({
     preset: 'dark' | 'light' | 'green' | 'purple' | 'red' | 'blue' | 'custom'
   ) => {
     tap();
-    setTheme(preset);
-    if (preset === 'custom') {
-      setCustomColors(localColors);
-    }
+    startTransition(() => {
+      setTheme(preset);
+      if (preset === 'custom') {
+        setCustomColors(localColors);
+      }
+    });
   };
 
   return (
