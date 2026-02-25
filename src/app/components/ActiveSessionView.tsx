@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import { useLocale } from './LocaleProvider';
 import { useVibration } from './useVibration';
 import { ChevronRight, Play, Pause, RotateCcw, Star } from 'lucide-react';
@@ -7,6 +7,7 @@ import { Tea } from './types';
 
 export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => void }) => {
   const { t } = useLocale();
+  const [isPending, startTransition] = useTransition();
   // ─── Режим ───────────────────────────────────────────────
   type TimerMode = 'stopwatch' | 'countdown';
   const [mode, setMode] = useState<TimerMode>('stopwatch');
@@ -94,16 +95,19 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
     return () => clearInterval(interval);
   }, []);
 
-  const handleFinish = async () => {
-    await addSessionAction({
-      teaId: tea.id,
-      duration: sessionDuration,
-      steeps: steepCount,
-      grams,
-      volume,
-      rating,
-    });
+  const handleFinish = () => {
     onClose();
+
+    startTransition(async () => {
+      await addSessionAction({
+        teaId: tea.id,
+        duration: sessionDuration,
+        steeps: steepCount,
+        grams,
+        volume,
+        rating,
+      });
+    });
   };
 
   const formatTime = (totalSeconds: number) => {

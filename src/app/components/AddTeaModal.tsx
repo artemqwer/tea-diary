@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import { useLocale } from './LocaleProvider';
 import { X, Sparkles, RefreshCw, AlertTriangle } from 'lucide-react';
 import { addTeaAction, analyzeTeaImageAction } from './../actions';
 
 export const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
   const { t, locale } = useLocale();
+  const [isPending, startTransition] = useTransition();
   const [formData, setFormData] = useState({
     name: '',
     type: locale === 'uk' ? 'Пуер' : 'Puer',
@@ -123,21 +124,25 @@ export const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name) return;
 
     const finalType = isCustomType ? customType || 'Інший' : formData.type;
 
-    await addTeaAction({
-      name: formData.name,
-      type: finalType,
-      color: badgeColor || undefined,
-      year: Number(formData.year) || new Date().getFullYear(),
-      origin: formData.origin,
-      total: Number(formData.total) || 1,
-    });
+    // Close modal instantly to keep UI snappy
     onClose();
+
+    startTransition(async () => {
+      await addTeaAction({
+        name: formData.name,
+        type: finalType,
+        color: badgeColor || undefined,
+        year: Number(formData.year) || new Date().getFullYear(),
+        origin: formData.origin,
+        total: Number(formData.total) || 1,
+      });
+    });
   };
 
   const inputClass = 'w-full rounded-xl p-3 focus:outline-hidden transition-colors';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { useLocale } from './LocaleProvider';
@@ -23,6 +23,7 @@ export const UserProfileMenu = ({
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [showThemeModal, setShowThemeModal] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Закриття меню при кліку поза ним
@@ -42,17 +43,19 @@ export const UserProfileMenu = ({
     await signOut({ callbackUrl: '/login' });
   };
 
-  const handleAvatarUpdate = async (url: string) => {
+  const handleAvatarUpdate = (url: string) => {
     try {
       // Оптимістичне оновлення локально
       const updatedUser = { ...user, image: url };
       onUserUpdate(updatedUser);
 
-      // Оновлення на сервері
-      await updateUserAvatarAction(url);
+      startTransition(async () => {
+        // Оновлення на сервері
+        await updateUserAvatarAction(url);
 
-      // Оновлення даних сесії (soft refresh)
-      router.refresh();
+        // Оновлення даних сесії (soft refresh)
+        router.refresh();
+      });
     } catch (e) {
       console.error('Avatar update failed', e);
       // Можна додати тост з помилкою
