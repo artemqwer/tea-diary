@@ -56,6 +56,28 @@ export async function deleteTeaAction(teaId: string) {
   }
 }
 
+// --- ВИДАЛЕННЯ СЕСІЇ ---
+export async function deleteSessionAction(sessionId: string) {
+  const sessionUser = await auth();
+  const userId = sessionUser?.user?.id;
+
+  if (!userId) throw new Error('Unauthorized');
+
+  try {
+    // Спочатку знаходимо сесію, щоб отримати чай, якщо потрібно повернути вагу
+    // Але зазвичай вага не повертається при видаленні історії. Залишимо просто видалення сесії
+    await prisma.session.delete({
+      where: {
+        id: sessionId,
+        userId: userId,
+      },
+    });
+    revalidatePath('/');
+  } catch (error) {
+    console.error('Failed to delete session:', error);
+  }
+}
+
 // --- ЗАПИС СЕСІЇ ---
 export async function addSessionAction(data: {
   teaId: string;

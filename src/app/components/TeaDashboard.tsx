@@ -5,6 +5,7 @@ import {
   addTeaAction,
   deleteTeaAction,
   addSessionAction,
+  deleteSessionAction,
   updateUserAvatarAction,
   analyzeTeaImageAction,
 } from './../actions';
@@ -83,6 +84,7 @@ function TeaDashboardInner({
   const [isAddModalOpen, setAddModalOpen] = useState(false);
 
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, teaId: '', teaName: '' });
+  const [deleteSessionModal, setDeleteSessionModal] = useState({ isOpen: false, sessionId: '' });
   const router = useRouter();
 
   const filteredTeas = useMemo(() => {
@@ -119,6 +121,18 @@ function TeaDashboardInner({
         }}
         title={t.stash.confirm_delete_title}
         message={t.stash.confirm_delete_msg(deleteModal.teaName)}
+      />
+
+      <ConfirmationModal
+        isOpen={deleteSessionModal.isOpen}
+        onClose={() => setDeleteSessionModal({ isOpen: false, sessionId: '' })}
+        onConfirm={async () => {
+          await deleteSessionAction(deleteSessionModal.sessionId);
+          setDeleteSessionModal({ isOpen: false, sessionId: '' });
+          router.refresh();
+        }}
+        title={t.history.confirm_delete_title}
+        message={t.history.confirm_delete_msg}
       />
 
       <div className="pb-28">
@@ -404,6 +418,13 @@ function TeaDashboardInner({
                         />
                       ))}
                     </div>
+                    <button
+                      onClick={() => setDeleteSessionModal({ isOpen: true, sessionId: session.id })}
+                      className="p-1 mb-1 shadow-xs transition-colors hover:text-red-400 self-start -mt-1 ml-1"
+                      style={{ color: 'var(--text-muted)' }}
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                   <div
                     className="flex justify-between text-[10px] uppercase tracking-widest"

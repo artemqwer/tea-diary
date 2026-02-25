@@ -106,13 +106,14 @@ export const translations = {
       save: 'Зберегти в історію',
     },
 
-    // History
     history: {
       title: 'Журнал',
       empty: 'Немає записів',
       empty_subtitle: 'Проводьте сесії, щоб бачити статистику',
       steeps: 'проливів',
       time: 'хв',
+      confirm_delete_title: 'Видалити сесію?',
+      confirm_delete_msg: 'Ви впевнені, що хочете видалити цей запис сесії?',
     },
 
     // Profile
@@ -267,6 +268,8 @@ export const translations = {
       empty_subtitle: 'Run sessions to see your stats',
       steeps: 'steeps',
       time: 'min',
+      confirm_delete_title: 'Delete session?',
+      confirm_delete_msg: 'Are you sure you want to delete this session record?',
     },
 
     // Profile
