@@ -41,7 +41,7 @@
     "zod": "~4.3"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/eslintrc": "^3.3.4",
     "@tailwindcss/postcss": "^4.2.0",
     "@types/bcryptjs": "~2.4",
     "@types/node": "~22.13.4",
