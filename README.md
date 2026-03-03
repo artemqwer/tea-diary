@@ -1,7 +1,7 @@
 # 🍵 Tea Diary
 
 A comprehensive, personal tea brewing diary. Track your tea stash, record brewing sessions with a specialized Gongfu timer, and monitor your taste evolution over time.  
-Built with Next.js 16, Prisma, NextAuth, and Groq AI for automatic tea photo recognition.
+Built with Next.js 16, Prisma, NextAuth, and Google Gemini AI for automatic tea photo recognition.
 
 ---
 
@@ -17,7 +17,7 @@ Built with Next.js 16, Prisma, NextAuth, and Groq AI for automatic tea photo rec
 
 - **Inventory**: Visual cards representing your teas, showing type, year, region, and remaining weight.
 - **Search**: Real-time filtering by tea name.
-- **Add with AI**: Take or upload a photo of your tea wrapper/cake, and the Groq Vision AI will automatically extract the name, type, year, and region!
+- **Add with AI**: Take or upload a photo of your tea wrapper/cake, and Google Gemini 2.5 Flash AI will automatically extract the name, type, year, and region!
 - **Manual Add**: Add teas manually with 12 distinct tea types (Puer, Oolong, Red, Green, etc.) or a custom type.
 - **Badge Colors**: Customize the color of the tea type badge with 7 presets or a custom color picker.
 
@@ -50,7 +50,7 @@ Built with Next.js 16, Prisma, NextAuth, and Groq AI for automatic tea photo rec
 - **Database**: PostgreSQL (via [Neon](https://neon.tech)) + [Prisma ORM](https://www.prisma.io/)
 - **Auth**: NextAuth v5 (Auth.js)
 - **Styling**: Tailwind CSS + Custom CSS Variables for dynamic themes
-- **AI**: [Groq API](https://groq.com/) (Llama 3 Vision model)
+- **AI**: [Google Gemini 2.5 Flash](https://deepmind.google/technologies/gemini/) (`@google/generative-ai`)
 - **PWA**: `@ducanh2912/next-pwa` for offline capabilities and mobile installation
 - **Code Quality**: ESLint, Prettier, Husky, lint-staged, GitHub Actions
 
@@ -105,7 +105,7 @@ Open `.env.local` in your editor and fill in the required values:
 - `DATABASE_URL`: Your PostgreSQL connection string (from Neon or local DB).
 - `AUTH_SECRET`: A random 32-character string for NextAuth. Generate one by running `openssl rand -base64 32` in your terminal or use an [online generator](https://generate-secret.vercel.app/32).
 - `NEXTAUTH_URL`: Should be `http://localhost:3000` for local development.
-- `GROQ_API_KEY`: Your API key from Groq for the AI picture analysis.
+- `GOOGLE_GEMINI_API_KEY`: Your API key from [Google AI Studio](https://aistudio.google.com/) for the AI picture analysis.
 
 ### 5. Setup the Database
 
@@ -166,7 +166,7 @@ The easiest way to deploy this application is using [Vercel](https://vercel.com)
 
 1. Push your code to GitHub.
 2. Import the repository in Vercel.
-3. Add your Environment Variables (`DATABASE_URL`, `AUTH_SECRET`, `NEXTAUTH_URL`, `GROQ_API_KEY`) in the Vercel project settings.
+3. Add your Environment Variables (`DATABASE_URL`, `AUTH_SECRET`, `NEXTAUTH_URL`, `GOOGLE_GEMINI_API_KEY`) in the Vercel project settings.
 4. Deploy!
 
 The automated script `vercel-build` is already configured in `package.json` to safely run `prisma generate` and `prisma db push` before building the app on Vercel.

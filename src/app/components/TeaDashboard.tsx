@@ -56,7 +56,7 @@ import { UserProfileMenu } from './UserProfileMenu';
 import { AddTeaModal } from './AddTeaModal';
 import { ActiveSessionView } from './ActiveSessionView';
 import { ContributionGraph } from './ContributionGraph';
-import { Tea, Session } from './types';
+import { Tea, Session, UserProfile } from './types';
 
 // --- ГОЛОВНИЙ ДАШБОРД ---
 function TeaDashboardInner({
@@ -66,9 +66,9 @@ function TeaDashboardInner({
   user,
 }: {
   initialTeas: Tea[];
-  initialSessions: any[];
-  stats: any;
-  user?: any;
+  initialSessions: Session[];
+  stats: { liters: string; hours: string; sessionCount: number };
+  user?: UserProfile;
 }) {
   const { t, locale } = useLocale();
   const [isPending, startTransition] = useTransition();
@@ -178,7 +178,7 @@ function TeaDashboardInner({
               </span>
             </div>
           </div>
-          <UserProfileMenu user={currentUser} onUserUpdate={setCurrentUser} />
+          <UserProfileMenu user={currentUser ?? {}} onUserUpdate={setCurrentUser} />
         </header>
 
         <main className="px-6">
@@ -198,7 +198,7 @@ function TeaDashboardInner({
                 </div>
               </button>
 
-              <ContributionGraph sessions={initialSessions} />
+              <ContributionGraph sessions={initialSessions} locale={locale} />
 
               <div className="grid grid-cols-2 gap-4">
                 <div
@@ -330,75 +330,90 @@ function TeaDashboardInner({
               </div>
 
               <div className="space-y-3">
-                {filteredTeas.map(tea => {
-                  const progress = Math.round((tea.remaining / tea.total) * 100);
-                  return (
-                    <div
-                      key={tea.id}
-                      onClick={() => setActiveTea(tea)}
-                      className="rounded-2xl p-4 active:scale-98 transition-transform cursor-pointer group"
-                      style={{
-                        background: 'var(--bg-secondary)',
-                        border: '1px solid var(--border-primary)',
-                      }}
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <span
-                          className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-medium"
-                          style={
-                            tea.color
-                              ? {
+                {filteredTeas.length === 0 ? (
+                  <div
+                    className="text-center py-16 rounded-2xl"
+                    style={{ background: 'var(--bg-secondary)', border: '1px dashed var(--border-primary)' }}
+                  >
+                    <p className="text-4xl mb-3">🫖</p>
+                    <p className="font-medium" style={{ color: 'var(--text-secondary)' }}>
+                      {t.stash.empty_title}
+                    </p>
+                    <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
+                      {t.stash.empty_subtitle}
+                    </p>
+                  </div>
+                ) : (
+                  filteredTeas.map(tea => {
+                    const progress = Math.round((tea.remaining / tea.total) * 100);
+                    return (
+                      <div
+                        key={tea.id}
+                        onClick={() => setActiveTea(tea)}
+                        className="rounded-2xl p-4 active:scale-98 transition-transform cursor-pointer group"
+                        style={{
+                          background: 'var(--bg-secondary)',
+                          border: '1px solid var(--border-primary)',
+                        }}
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <span
+                            className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-medium"
+                            style={
+                              tea.color
+                                ? {
                                   background: tea.color + '22',
                                   color: tea.color,
                                   border: `1px solid ${tea.color}55`,
                                 }
-                              : {
+                                : {
                                   border: '1px solid var(--border-primary)',
                                   background: 'var(--bg-tertiary)',
                                   color: 'var(--text-secondary)',
                                 }
-                          }
-                        >
-                          {tea.type}
-                        </span>
-                        <button
-                          onClick={e => confirmDelete(e, tea)}
-                          className="p-1 transition-colors hover:text-red-400"
-                          style={{ color: 'var(--text-muted)' }}
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                      <div className="flex justify-between items-end mb-3 gap-3">
-                        <h3
-                          className="font-medium text-lg truncate min-w-0 flex-1"
-                          style={{ color: 'var(--text-primary)' }}
-                        >
-                          {tea.name}
-                        </h3>
-                        <span
-                          className="text-xs font-mono shrink-0"
-                          style={{ color: 'var(--text-secondary)' }}
-                        >
-                          {tea.remaining} / {tea.total}г
-                        </span>
-                      </div>
-                      <div
-                        className="w-full h-1.5 rounded-full overflow-hidden"
-                        style={{ background: 'var(--bg-tertiary)' }}
-                      >
+                            }
+                          >
+                            {tea.type}
+                          </span>
+                          <button
+                            onClick={e => confirmDelete(e, tea)}
+                            className="p-1 transition-colors hover:text-red-400"
+                            style={{ color: 'var(--text-muted)' }}
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                        <div className="flex justify-between items-end mb-3 gap-3">
+                          <h3
+                            className="font-medium text-lg truncate min-w-0 flex-1"
+                            style={{ color: 'var(--text-primary)' }}
+                          >
+                            {tea.name}
+                          </h3>
+                          <span
+                            className="text-xs font-mono shrink-0"
+                            style={{ color: 'var(--text-secondary)' }}
+                          >
+                            {tea.remaining} / {tea.total}г
+                          </span>
+                        </div>
                         <div
-                          className="h-full rounded-full transition-all duration-1000"
-                          style={{
-                            width: `${progress}%`,
-                            background: 'var(--accent)',
-                            opacity: 0.6,
-                          }}
-                        />
+                          className="w-full h-1.5 rounded-full overflow-hidden"
+                          style={{ background: 'var(--bg-tertiary)' }}
+                        >
+                          <div
+                            className="h-full rounded-full transition-all duration-1000"
+                            style={{
+                              width: `${progress}%`,
+                              background: 'var(--accent)',
+                              opacity: 0.6,
+                            }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
 
               <button
@@ -414,51 +429,66 @@ function TeaDashboardInner({
           {activeTab === 'history' && (
             <div className="space-y-4 animate-in fade-in duration-500">
               <h2 className="text-xl font-serif mb-6">{t.history.title}</h2>
-              {initialSessions.map(session => (
+              {localSessions.length === 0 ? (
                 <div
-                  key={session.id}
-                  className="p-4 rounded-xl"
-                  style={{
-                    background: 'var(--bg-secondary)',
-                    border: '1px solid var(--border-primary)',
-                  }}
+                  className="text-center py-16 rounded-2xl"
+                  style={{ background: 'var(--bg-secondary)', border: '1px dashed var(--border-primary)' }}
                 >
-                  <div className="flex justify-between items-start mb-2 gap-3">
-                    <h4 className="font-medium truncate min-w-0 flex-1">
-                      {session.tea?.name || (locale === 'uk' ? 'Видалений чай' : 'Deleted tea')}
-                    </h4>
-                    <div className="flex gap-0.5 shrink-0 mt-1">
-                      {[...Array(5)].map((_, i) => (
-                        <div
-                          key={i}
-                          className="w-1 h-1 rounded-full"
-                          style={{
-                            background:
-                              i < session.rating ? 'var(--accent)' : 'var(--border-primary)',
-                          }}
-                        />
-                      ))}
+                  <p className="text-4xl mb-3">📖</p>
+                  <p className="font-medium" style={{ color: 'var(--text-secondary)' }}>
+                    {t.history.empty}
+                  </p>
+                  <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
+                    {t.history.empty_subtitle}
+                  </p>
+                </div>
+              ) : (
+                localSessions.map(session => (
+                  <div
+                    key={session.id}
+                    className="p-4 rounded-xl"
+                    style={{
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border-primary)',
+                    }}
+                  >
+                    <div className="flex justify-between items-start mb-2 gap-3">
+                      <h4 className="font-medium truncate min-w-0 flex-1">
+                        {session.tea?.name || (locale === 'uk' ? 'Видалений чай' : 'Deleted tea')}
+                      </h4>
+                      <div className="flex gap-0.5 shrink-0 mt-1">
+                        {[...Array(5)].map((_, i) => (
+                          <div
+                            key={i}
+                            className="w-1 h-1 rounded-full"
+                            style={{
+                              background:
+                                i < session.rating ? 'var(--accent)' : 'var(--border-primary)',
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <button
+                        onClick={() => setDeleteSessionModal({ isOpen: true, sessionId: session.id })}
+                        className="p-1 mb-1 shadow-xs transition-colors hover:text-red-400 self-start -mt-1 ml-1"
+                        style={{ color: 'var(--text-muted)' }}
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
-                    <button
-                      onClick={() => setDeleteSessionModal({ isOpen: true, sessionId: session.id })}
-                      className="p-1 mb-1 shadow-xs transition-colors hover:text-red-400 self-start -mt-1 ml-1"
+                    <div
+                      className="flex justify-between text-[10px] uppercase tracking-widest"
                       style={{ color: 'var(--text-muted)' }}
                     >
-                      <Trash2 size={16} />
-                    </button>
+                      <span>{new Date(session.date).toLocaleDateString()}</span>
+                      <span>
+                        {session.steeps} {t.history.steeps} • {Math.floor(session.duration / 60)}
+                        {t.history.time}
+                      </span>
+                    </div>
                   </div>
-                  <div
-                    className="flex justify-between text-[10px] uppercase tracking-widest"
-                    style={{ color: 'var(--text-muted)' }}
-                  >
-                    <span>{new Date(session.date).toLocaleDateString()}</span>
-                    <span>
-                      {session.steeps} {t.history.steeps} • {Math.floor(session.duration / 60)}
-                      {t.history.time}
-                    </span>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           )}
         </main>
@@ -500,9 +530,9 @@ function TeaDashboardInner({
 
 export default function TeaDashboard(props: {
   initialTeas: Tea[];
-  initialSessions: any[];
-  stats: any;
-  user?: any;
+  initialSessions: Session[];
+  stats: { liters: string; hours: string; sessionCount: number };
+  user?: UserProfile;
 }) {
   return (
     <LocaleProvider>

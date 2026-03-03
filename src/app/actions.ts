@@ -86,6 +86,7 @@ export async function addSessionAction(data: {
   grams: number;
   volume: number;
   rating: number;
+  temp?: number;
 }) {
   const session = await auth();
   const userId = session?.user?.id;

@@ -3,22 +3,25 @@ import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { useLocale } from './LocaleProvider';
 import { useVibration } from './useVibration';
+import { useToast } from './Toast';
 import { Camera, Palette, Settings, LogOut } from 'lucide-react';
 import { updateUserAvatarAction } from './../actions';
 import { ConfirmationModal } from './ConfirmationModal';
 import { AvatarSelectionModal } from './AvatarSelectionModal';
 import { ThemeSettingsModal } from './ThemeSettingsModal';
+import type { UserProfile } from './types';
 
 export const UserProfileMenu = ({
   user,
   onUserUpdate,
 }: {
-  user: any;
-  onUserUpdate: (newUser: any) => void;
+  user: UserProfile;
+  onUserUpdate: (newUser: UserProfile) => void;
 }) => {
   const router = useRouter();
   const { locale, setLocale, t } = useLocale();
   const { tap } = useVibration();
+  const { showToast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
@@ -45,20 +48,27 @@ export const UserProfileMenu = ({
 
   const handleAvatarUpdate = (url: string) => {
     try {
-      // Оптимістичне оновлення локально
-      const updatedUser = { ...user, image: url };
+      const updatedUser: UserProfile = { ...user, image: url };
       onUserUpdate(updatedUser);
 
       startTransition(async () => {
-        // Оновлення на сервері
-        await updateUserAvatarAction(url);
-
-        // Оновлення даних сесії (soft refresh)
-        router.refresh();
+        try {
+          await updateUserAvatarAction(url);
+          router.refresh();
+        } catch (e) {
+          console.error('Avatar update failed', e);
+          showToast(
+            locale === 'uk' ? 'Помилка збереження аватару' : 'Failed to save avatar',
+            'error'
+          );
+        }
       });
     } catch (e) {
       console.error('Avatar update failed', e);
-      // Можна додати тост з помилкою
+      showToast(
+        locale === 'uk' ? 'Помилка оновлення аватару' : 'Avatar update error',
+        'error'
+      );
     }
   };
 
@@ -74,14 +84,14 @@ export const UserProfileMenu = ({
 
   const Avatar = ({ className, size = 'sm' }: { className?: string; size?: 'sm' | 'lg' }) => {
     if (user?.image) {
-      return <img src={user.image} alt={user.name} className={`${className} object-cover`} />;
+      return <img src={user.image} alt={user.name ?? 'Avatar'} className={`${className} object-cover`} />;
     }
     return (
       <div
         className={`${className} flex items-center justify-center text-white font-bold ${size === 'lg' ? 'text-xl' : 'text-xs'}`}
         style={{ background: 'linear-gradient(135deg, var(--accent), var(--accent-hover))' }}
       >
-        {getInitials(user?.name)}
+        {getInitials(user?.name ?? undefined)}
       </div>
     );
   };

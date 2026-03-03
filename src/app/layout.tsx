@@ -2,13 +2,14 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from './components/ThemeProvider';
+import { ToastProvider } from './components/Toast';
 import { Analytics } from '@vercel/analytics/react';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
 export const metadata: Metadata = {
   title: 'Tea Diary',
-  description: 'Дневник китайского чая',
+  description: 'Щоденник китайського чаю — відстежуй свою колекцію та сесії заварювання',
   manifest: '/manifest.json',
   icons: {
     apple: '/icons/icon.svg',
@@ -29,12 +30,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru">
+    <html lang="uk">
       <body
         className={`${inter.className} antialiased`}
         style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

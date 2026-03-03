@@ -2,7 +2,15 @@ import React, { useState, useRef } from 'react';
 import { useLocale } from './LocaleProvider';
 import { X, RefreshCw, Camera, Upload } from 'lucide-react';
 
-export const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
+export const AvatarSelectionModal = ({
+  isOpen,
+  onClose,
+  onSelect,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (url: string) => void;
+}) => {
   const { locale } = useLocale();
   const [seed, setSeed] = useState(Math.random().toString(36).substring(7));
   const [style, setStyle] = useState('notionists');
@@ -253,10 +261,10 @@ export const AvatarSelectionModal = ({ isOpen, onClose, onSelect }: any) => {
                   uploadPreview
                     ? { background: 'var(--accent)', color: 'white' }
                     : {
-                        background: 'var(--bg-tertiary)',
-                        color: 'var(--text-muted)',
-                        cursor: 'not-allowed',
-                      }
+                      background: 'var(--bg-tertiary)',
+                      color: 'var(--text-muted)',
+                      cursor: 'not-allowed',
+                    }
                 }
               >
                 {locale === 'uk' ? 'Зберегти' : 'Save'}

@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useRef } from 'react';
 import { Calendar } from 'lucide-react';
 
-export const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
+export const ContributionGraph = ({ sessions, locale }: { sessions: any[]; locale: string }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -60,10 +60,12 @@ export const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
           <Calendar size={16} />
-          <span className="text-xs font-bold uppercase tracking-widest">Рік Чаю</span>
+          <span className="text-xs font-bold uppercase tracking-widest">
+            {locale === 'uk' ? 'Рік Чаю' : 'Tea Year'}
+          </span>
         </div>
         <span className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>
-          {totalSessions} сесій за рік
+          {totalSessions} {locale === 'uk' ? 'сесій за рік' : 'sessions this year'}
         </span>
       </div>
 
@@ -97,7 +99,7 @@ export const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
         className="flex items-center gap-2 mt-3 text-[10px] justify-end"
         style={{ color: 'var(--text-muted)' }}
       >
-        <span>Less</span>
+        <span>{locale === 'uk' ? 'Менше' : 'Less'}</span>
         <div
           className="w-2 h-2 rounded-xs"
           style={{ background: 'var(--bg-tertiary)', opacity: 0.4 }}
@@ -105,7 +107,7 @@ export const ContributionGraph = ({ sessions }: { sessions: any[] }) => {
         <div className="w-2 h-2 rounded-xs" style={{ background: 'var(--accent)', opacity: 0.3 }} />
         <div className="w-2 h-2 rounded-xs" style={{ background: 'var(--accent)', opacity: 0.6 }} />
         <div className="w-2 h-2 rounded-xs" style={{ background: 'var(--accent)' }} />
-        <span>More</span>
+        <span>{locale === 'uk' ? 'Більше' : 'More'}</span>
       </div>
     </div>
   );

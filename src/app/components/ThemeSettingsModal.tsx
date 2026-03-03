@@ -69,13 +69,41 @@ export const ThemeSettingsModal = ({
   ];
 
   const colorFields = [
-    { key: 'accent' as const, label: 'Акцент', desc: 'Кнопки, активні елементи' },
-    { key: 'bgPrimary' as const, label: 'Фон основний', desc: 'Головний фон' },
-    { key: 'bgSecondary' as const, label: 'Фон вторинний', desc: 'Картки, панелі' },
-    { key: 'bgTertiary' as const, label: 'Фон третинний', desc: 'Ховер, бордери' },
-    { key: 'textPrimary' as const, label: 'Текст основний', desc: 'Заголовки' },
-    { key: 'textSecondary' as const, label: 'Текст вторинний', desc: 'Підписи' },
-    { key: 'borderPrimary' as const, label: 'Бордер', desc: 'Лінії розділу' },
+    {
+      key: 'accent' as const,
+      label: locale === 'uk' ? 'Акцент' : 'Accent',
+      desc: locale === 'uk' ? 'Кнопки, активні елементи' : 'Buttons, active elements',
+    },
+    {
+      key: 'bgPrimary' as const,
+      label: locale === 'uk' ? 'Фон основний' : 'Primary BG',
+      desc: locale === 'uk' ? 'Головний фон' : 'Main background',
+    },
+    {
+      key: 'bgSecondary' as const,
+      label: locale === 'uk' ? 'Фон вторинний' : 'Secondary BG',
+      desc: locale === 'uk' ? 'Картки, панелі' : 'Cards, panels',
+    },
+    {
+      key: 'bgTertiary' as const,
+      label: locale === 'uk' ? 'Фон третинний' : 'Tertiary BG',
+      desc: locale === 'uk' ? 'Ховер, бордери' : 'Hover, borders',
+    },
+    {
+      key: 'textPrimary' as const,
+      label: locale === 'uk' ? 'Текст основний' : 'Primary text',
+      desc: locale === 'uk' ? 'Заголовки' : 'Headings',
+    },
+    {
+      key: 'textSecondary' as const,
+      label: locale === 'uk' ? 'Текст вторинний' : 'Secondary text',
+      desc: locale === 'uk' ? 'Підписи' : 'Labels',
+    },
+    {
+      key: 'borderPrimary' as const,
+      label: locale === 'uk' ? 'Бордер' : 'Border',
+      desc: locale === 'uk' ? 'Лінії розділу' : 'Divider lines',
+    },
   ];
 
   const handleColorChange = (key: keyof typeof localColors, value: string) => {
@@ -119,7 +147,7 @@ export const ThemeSettingsModal = ({
         <div className="flex items-center gap-2 mb-6">
           <Palette size={22} style={{ color: 'var(--accent)' }} />
           <h3 className="text-xl font-serif" style={{ color: 'var(--text-primary)' }}>
-            Тема додатку
+            {locale === 'uk' ? 'Тема додатку' : 'App Theme'}
           </h3>
         </div>
 
@@ -167,7 +195,7 @@ export const ThemeSettingsModal = ({
               className="text-xs font-bold uppercase tracking-widest mb-3"
               style={{ color: 'var(--text-muted)' }}
             >
-              Кольори
+              {locale === 'uk' ? 'Кольори' : 'Colors'}
             </p>
             {colorFields.map(field => (
               <div key={field.key} className="flex items-center gap-3">
