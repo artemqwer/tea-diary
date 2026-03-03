@@ -11,6 +11,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Усі поля обов'язкові" }, { status: 400 });
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: 'Невірний формат email' }, { status: 400 });
+    }
+
     if (password.length < 6) {
       return NextResponse.json({ error: 'Пароль має бути не менше 6 символів' }, { status: 400 });
     }

@@ -11,10 +11,20 @@ export type Tea = {
 
 export type Session = {
   id: string;
-  tea?: { name: string; type: string };
-  date: Date;
+  tea?: { name: string; type: string } | null;
+  date: Date | string;
   duration: number;
   steeps: number;
   volume: number;
+  grams: number;
+  temp?: number | null;
   rating: number;
+};
+
+export type UserProfile = {
+  id?: string;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  emailVerified?: Date | null;
 };

@@ -73,6 +73,7 @@ model Session {
   
   volume   Int
   grams    Float
+  temp     Int?
   
   teaId    String
   tea      Tea      @relation(fields: [teaId], references: [id], onDelete: Cascade)

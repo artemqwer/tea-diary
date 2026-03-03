@@ -168,7 +168,7 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      <p className="mt-8 text-stone-600 text-xs">© 2026 Tea Diary App</p>
+      <p className="mt-8 text-stone-600 text-xs">© {new Date().getFullYear()} Tea Diary App</p>
     </div>
   );
 }

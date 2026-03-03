@@ -106,6 +106,7 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
         grams,
         volume,
         rating,
+        temp,
       });
     });
   };
@@ -387,10 +388,10 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
                 style={
                   isActive
                     ? {
-                        background: 'var(--bg-secondary)',
-                        color: 'var(--accent)',
-                        border: '1px solid var(--accent-border)',
-                      }
+                      background: 'var(--bg-secondary)',
+                      color: 'var(--accent)',
+                      border: '1px solid var(--accent-border)',
+                    }
                     : { background: 'var(--accent)', color: 'white' }
                 }
               >
