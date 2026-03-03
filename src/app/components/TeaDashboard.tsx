@@ -100,7 +100,7 @@ function TeaDashboardInner({
 
   const filteredTeas = useMemo(() => {
     return localTeas.filter(
-      t =>
+      (t) =>
         t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         t.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
         t.origin.toLowerCase().includes(searchQuery.toLowerCase())
@@ -128,7 +128,7 @@ function TeaDashboardInner({
         onConfirm={() => {
           const idToDelete = deleteModal.teaId;
           setDeleteModal({ ...deleteModal, isOpen: false });
-          setLocalTeas(prev => prev.filter(t => t.id !== idToDelete));
+          setLocalTeas((prev) => prev.filter((t) => t.id !== idToDelete));
 
           startTransition(async () => {
             await deleteTeaAction(idToDelete);
@@ -145,7 +145,7 @@ function TeaDashboardInner({
         onConfirm={() => {
           const idToDelete = deleteSessionModal.sessionId;
           setDeleteSessionModal({ isOpen: false, sessionId: '' });
-          setLocalSessions(prev => prev.filter(s => s.id !== idToDelete));
+          setLocalSessions((prev) => prev.filter((s) => s.id !== idToDelete));
 
           startTransition(async () => {
             await deleteSessionAction(idToDelete);
@@ -267,7 +267,7 @@ function TeaDashboardInner({
                   </button>
                 </div>
                 <div className="space-y-3">
-                  {initialSessions.slice(0, 3).map(s => (
+                  {initialSessions.slice(0, 3).map((s) => (
                     <div
                       key={s.id}
                       className="p-4 rounded-xl flex justify-between items-center"
@@ -320,7 +320,7 @@ function TeaDashboardInner({
                   }}
                   placeholder={t.stash.search_placeholder}
                   value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <Search
                   className="absolute left-3 top-3.5"
@@ -347,7 +347,7 @@ function TeaDashboardInner({
                     </p>
                   </div>
                 ) : (
-                  filteredTeas.map(tea => {
+                  filteredTeas.map((tea) => {
                     const progress = Math.round((tea.remaining / tea.total) * 100);
                     return (
                       <div
@@ -379,7 +379,7 @@ function TeaDashboardInner({
                             {tea.type}
                           </span>
                           <button
-                            onClick={e => confirmDelete(e, tea)}
+                            onClick={(e) => confirmDelete(e, tea)}
                             className="p-1 transition-colors hover:text-red-400"
                             style={{ color: 'var(--text-muted)' }}
                           >
@@ -449,7 +449,7 @@ function TeaDashboardInner({
                   </p>
                 </div>
               ) : (
-                localSessions.map(session => (
+                localSessions.map((session) => (
                   <div
                     key={session.id}
                     className="p-4 rounded-xl"

@@ -153,7 +153,7 @@ export const ThemeSettingsModal = ({
 
         {/* Theme presets grid */}
         <div className="grid grid-cols-3 gap-2 mb-6">
-          {presets.map(p => {
+          {presets.map((p) => {
             const isActive = theme === p.id;
             return (
               <button
@@ -197,7 +197,7 @@ export const ThemeSettingsModal = ({
             >
               {locale === 'uk' ? 'Кольори' : 'Colors'}
             </p>
-            {colorFields.map(field => (
+            {colorFields.map((field) => (
               <div key={field.key} className="flex items-center gap-3">
                 <label
                   className="relative w-10 h-10 rounded-lg overflow-hidden cursor-pointer shrink-0"
@@ -206,7 +206,7 @@ export const ThemeSettingsModal = ({
                   <input
                     type="color"
                     value={localColors[field.key]}
-                    onChange={e => handleColorChange(field.key, e.target.value)}
+                    onChange={(e) => handleColorChange(field.key, e.target.value)}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
                   <div className="w-full h-full" style={{ background: localColors[field.key] }} />

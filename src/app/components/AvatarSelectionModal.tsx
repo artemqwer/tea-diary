@@ -32,7 +32,7 @@ export const AvatarSelectionModal = ({
     return new Promise((resolve, reject) => {
       const img = document.createElement('img');
       const reader = new FileReader();
-      reader.onload = e => {
+      reader.onload = (e) => {
         img.src = e.target?.result as string;
       };
       reader.onerror = reject;
@@ -152,7 +152,7 @@ export const AvatarSelectionModal = ({
             </div>
 
             <div className="grid grid-cols-4 gap-2 mb-6">
-              {styles.map(s => (
+              {styles.map((s) => (
                 <button
                   key={s.id}
                   onClick={() => setStyle(s.id)}

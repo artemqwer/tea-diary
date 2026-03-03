@@ -73,7 +73,7 @@ export const UserProfileMenu = ({
     if (!name) return 'U';
     return name
       .split(' ')
-      .map(n => n[0])
+      .map((n) => n[0])
       .join('')
       .toUpperCase()
       .slice(0, 2);
@@ -157,8 +157,8 @@ export const UserProfileMenu = ({
                 }}
                 className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-colors group"
                 style={{ color: 'var(--text-secondary)' }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-hover)')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
               >
                 <Palette size={18} className="group-hover:rotate-12 transition-transform" />
                 <span className="font-medium">{t.profile.theme_settings}</span>
@@ -177,7 +177,7 @@ export const UserProfileMenu = ({
                   className="flex gap-1 rounded-lg p-0.5"
                   style={{ background: 'var(--bg-tertiary)' }}
                 >
-                  {(['uk', 'en'] as const).map(l => (
+                  {(['uk', 'en'] as const).map((l) => (
                     <button
                       key={l}
                       onClick={() => {

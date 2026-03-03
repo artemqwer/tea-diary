@@ -64,7 +64,7 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
     if (mode !== 'stopwatch') return;
     let interval: NodeJS.Timeout | null = null;
     if (isActive) {
-      interval = setInterval(() => setSeconds(s => s + 1), 1000);
+      interval = setInterval(() => setSeconds((s) => s + 1), 1000);
     }
     return () => {
       if (interval) clearInterval(interval);
@@ -75,7 +75,7 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
   useEffect(() => {
     if (mode !== 'countdown' || countdown === null || countdown <= 0) return;
     const interval = setInterval(() => {
-      setCountdown(c => {
+      setCountdown((c) => {
         if (c === null || c <= 1) {
           clearInterval(interval);
           setCountdownDone(true);
@@ -91,7 +91,7 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
 
   // ─── Загальна тривалість (завжди тікає)───────────────────
   useEffect(() => {
-    const interval = setInterval(() => setSessionDuration(s => s + 1), 1000);
+    const interval = setInterval(() => setSessionDuration((s) => s + 1), 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -132,7 +132,7 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
   };
 
   const extendCountdown = () => {
-    setCountdown(c => (c ?? 0) + 60);
+    setCountdown((c) => (c ?? 0) + 60);
     setCountdownDone(false);
     tap();
   };
@@ -159,7 +159,7 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
         </p>
 
         <div className="flex gap-2 mb-12">
-          {[1, 2, 3, 4, 5].map(star => (
+          {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
               type="button"
@@ -251,7 +251,7 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
           className="flex rounded-xl p-1 mb-4 gap-1"
           style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
         >
-          {(['stopwatch', 'countdown'] as TimerMode[]).map(m => (
+          {(['stopwatch', 'countdown'] as TimerMode[]).map((m) => (
             <button
               key={m}
               type="button"
@@ -289,7 +289,7 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
                 className="bg-transparent w-8 text-center focus:outline-hidden"
                 style={{ color: 'var(--text-primary)' }}
                 value={temp || ''}
-                onChange={e => setTemp(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)}
+                onChange={(e) => setTemp(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)}
               />
               <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
                 °C
@@ -309,7 +309,7 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
                 className="bg-transparent w-6 text-center focus:outline-hidden"
                 style={{ color: 'var(--text-primary)' }}
                 value={grams || ''}
-                onChange={e => setGrams(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)}
+                onChange={(e) => setGrams(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)}
               />
               <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
                 г
@@ -329,7 +329,7 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
                 className="bg-transparent w-8 text-center focus:outline-hidden"
                 style={{ color: 'var(--text-primary)' }}
                 value={volume || ''}
-                onChange={e => setVolume(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)}
+                onChange={(e) => setVolume(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)}
               />
               <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
                 мл
@@ -407,7 +407,7 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
                   tap();
                   setIsActive(false);
                   setSeconds(0);
-                  setSteepCount(s => s + 1);
+                  setSteepCount((s) => s + 1);
                 }}
                 className="w-14 h-14 rounded-full flex items-center justify-center font-bold active:scale-90 transition-transform"
                 style={{
@@ -476,7 +476,7 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
                             caretColor: 'var(--accent)',
                           }}
                           value={targetMinutes}
-                          onChange={e =>
+                          onChange={(e) =>
                             setTargetMinutes(e.target.value.replace(/[^0-9]/g, '').slice(0, 2))
                           }
                           placeholder="3"
@@ -501,7 +501,7 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
                             caretColor: 'var(--accent)',
                           }}
                           value={targetSeconds}
-                          onChange={e =>
+                          onChange={(e) =>
                             setTargetSeconds(e.target.value.replace(/[^0-9]/g, '').slice(0, 2))
                           }
                           placeholder="00"
@@ -611,7 +611,7 @@ export const ActiveSessionView = ({ tea, onClose }: { tea: Tea; onClose: () => v
                 onClick={() => {
                   tap();
                   resetCountdown();
-                  setSteepCount(s => s + 1);
+                  setSteepCount((s) => s + 1);
                 }}
                 className="w-12 h-12 rounded-full flex items-center justify-center font-bold active:scale-90 transition-transform"
                 style={{

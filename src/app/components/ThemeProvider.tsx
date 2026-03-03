@@ -99,7 +99,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
         '--accent-subtle',
         '--accent-border',
       ];
-      props.forEach(p => root.style.removeProperty(p));
+      props.forEach((p) => root.style.removeProperty(p));
 
       if (PRESET_THEMES.includes(theme) && theme !== 'dark') {
         root.setAttribute('data-theme', theme);

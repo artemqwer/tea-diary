@@ -37,7 +37,7 @@ export const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
     return new Promise((resolve, reject) => {
       const img = document.createElement('img');
       const reader = new FileReader();
-      reader.onload = e => {
+      reader.onload = (e) => {
         img.src = e.target?.result as string;
       };
       reader.onerror = reject;
@@ -68,7 +68,7 @@ export const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
         ctx.drawImage(img, 0, 0, width, height);
 
         canvas.toBlob(
-          blob => {
+          (blob) => {
             if (blob) resolve(blob);
             else reject('Canvas error');
           },
@@ -299,7 +299,7 @@ export const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
               style={inputStyle}
               placeholder={t.addTea.name_placeholder}
               value={formData.name}
-              onChange={e => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             />
           </div>
 
@@ -312,7 +312,7 @@ export const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
                 className={`${inputClass} appearance-none`}
                 style={inputStyle}
                 value={isCustomType ? '__custom__' : formData.type}
-                onChange={e => {
+                onChange={(e) => {
                   if (e.target.value === '__custom__') {
                     setIsCustomType(true);
                     setCustomType('');
@@ -342,7 +342,7 @@ export const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
                   placeholder={t.addTea.custom_type_placeholder}
                   autoFocus
                   value={customType}
-                  onChange={e => setCustomType(e.target.value)}
+                  onChange={(e) => setCustomType(e.target.value)}
                 />
               )}
             </div>
@@ -355,7 +355,7 @@ export const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
                 className={inputClass}
                 style={inputStyle}
                 value={formData.year}
-                onChange={e =>
+                onChange={(e) =>
                   setFormData({ ...formData, year: e.target.value.replace(/[^0-9]/g, '') })
                 }
               />
@@ -372,7 +372,7 @@ export const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
                 style={inputStyle}
                 placeholder={t.addTea.region_placeholder}
                 value={formData.origin}
-                onChange={e => setFormData({ ...formData, origin: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
               />
             </div>
             <div>
@@ -385,7 +385,7 @@ export const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
                 style={inputStyle}
                 placeholder="357"
                 value={formData.total}
-                onChange={e =>
+                onChange={(e) =>
                   setFormData({ ...formData, total: e.target.value.replace(/[^0-9]/g, '') })
                 }
               />
@@ -398,7 +398,7 @@ export const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
               {t.addTea.color_label}
             </label>
             <div className="flex flex-wrap gap-2 mt-1">
-              {colorPresets.map(c => (
+              {colorPresets.map((c) => (
                 <button
                   key={c.hex}
                   type="button"
@@ -427,7 +427,7 @@ export const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
                 className="h-8 w-8 rounded-full overflow-hidden shrink-0 cursor-pointer relative border-2 transition-all"
                 style={{
                   borderColor:
-                    badgeColor && !colorPresets.some(c => c.hex === badgeColor)
+                    badgeColor && !colorPresets.some((c) => c.hex === badgeColor)
                       ? badgeColor
                       : 'var(--border-primary)',
                   background: badgeColor || 'var(--bg-tertiary)',
@@ -437,7 +437,7 @@ export const AddTeaModal = ({ onClose }: { onClose: () => void }) => {
                   type="color"
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   value={badgeColor || '#b45309'}
-                  onChange={e => setBadgeColor(e.target.value)}
+                  onChange={(e) => setBadgeColor(e.target.value)}
                 />
               </label>
             </div>
