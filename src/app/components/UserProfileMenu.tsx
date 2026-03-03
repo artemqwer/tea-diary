@@ -65,10 +65,7 @@ export const UserProfileMenu = ({
       });
     } catch (e) {
       console.error('Avatar update failed', e);
-      showToast(
-        locale === 'uk' ? 'Помилка оновлення аватару' : 'Avatar update error',
-        'error'
-      );
+      showToast(locale === 'uk' ? 'Помилка оновлення аватару' : 'Avatar update error', 'error');
     }
   };
 
@@ -84,7 +81,9 @@ export const UserProfileMenu = ({
 
   const Avatar = ({ className, size = 'sm' }: { className?: string; size?: 'sm' | 'lg' }) => {
     if (user?.image) {
-      return <img src={user.image} alt={user.name ?? 'Avatar'} className={`${className} object-cover`} />;
+      return (
+        <img src={user.image} alt={user.name ?? 'Avatar'} className={`${className} object-cover`} />
+      );
     }
     return (
       <div

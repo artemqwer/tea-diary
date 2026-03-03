@@ -261,10 +261,10 @@ export const AvatarSelectionModal = ({
                   uploadPreview
                     ? { background: 'var(--accent)', color: 'white' }
                     : {
-                      background: 'var(--bg-tertiary)',
-                      color: 'var(--text-muted)',
-                      cursor: 'not-allowed',
-                    }
+                        background: 'var(--bg-tertiary)',
+                        color: 'var(--text-muted)',
+                        cursor: 'not-allowed',
+                      }
                 }
               >
                 {locale === 'uk' ? 'Зберегти' : 'Save'}

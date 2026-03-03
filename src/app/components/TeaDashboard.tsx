@@ -333,7 +333,10 @@ function TeaDashboardInner({
                 {filteredTeas.length === 0 ? (
                   <div
                     className="text-center py-16 rounded-2xl"
-                    style={{ background: 'var(--bg-secondary)', border: '1px dashed var(--border-primary)' }}
+                    style={{
+                      background: 'var(--bg-secondary)',
+                      border: '1px dashed var(--border-primary)',
+                    }}
                   >
                     <p className="text-4xl mb-3">🫖</p>
                     <p className="font-medium" style={{ color: 'var(--text-secondary)' }}>
@@ -362,15 +365,15 @@ function TeaDashboardInner({
                             style={
                               tea.color
                                 ? {
-                                  background: tea.color + '22',
-                                  color: tea.color,
-                                  border: `1px solid ${tea.color}55`,
-                                }
+                                    background: tea.color + '22',
+                                    color: tea.color,
+                                    border: `1px solid ${tea.color}55`,
+                                  }
                                 : {
-                                  border: '1px solid var(--border-primary)',
-                                  background: 'var(--bg-tertiary)',
-                                  color: 'var(--text-secondary)',
-                                }
+                                    border: '1px solid var(--border-primary)',
+                                    background: 'var(--bg-tertiary)',
+                                    color: 'var(--text-secondary)',
+                                  }
                             }
                           >
                             {tea.type}
@@ -432,7 +435,10 @@ function TeaDashboardInner({
               {localSessions.length === 0 ? (
                 <div
                   className="text-center py-16 rounded-2xl"
-                  style={{ background: 'var(--bg-secondary)', border: '1px dashed var(--border-primary)' }}
+                  style={{
+                    background: 'var(--bg-secondary)',
+                    border: '1px dashed var(--border-primary)',
+                  }}
                 >
                   <p className="text-4xl mb-3">📖</p>
                   <p className="font-medium" style={{ color: 'var(--text-secondary)' }}>
@@ -469,7 +475,9 @@ function TeaDashboardInner({
                         ))}
                       </div>
                       <button
-                        onClick={() => setDeleteSessionModal({ isOpen: true, sessionId: session.id })}
+                        onClick={() =>
+                          setDeleteSessionModal({ isOpen: true, sessionId: session.id })
+                        }
                         className="p-1 mb-1 shadow-xs transition-colors hover:text-red-400 self-start -mt-1 ml-1"
                         style={{ color: 'var(--text-muted)' }}
                       >
