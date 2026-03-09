@@ -30,7 +30,7 @@
     "date-fns": "^4.1.0",
     "dexie": "^4.3.0",
     "dexie-react-hooks": "^4.2.0",
-    "framer-motion": "^12.34.3",
+    "framer-motion": "^12.35.1",
     "lucide-react": "~0.479",
     "next": "~16.1",
     "next-auth": "~5.0.0-beta.30",
